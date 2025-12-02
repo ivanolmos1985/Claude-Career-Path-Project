@@ -40,7 +40,7 @@ https://app.supabase.com/
 ```sql
 -- TABLA 1: Teams (Equipos)
 CREATE TABLE teams (
-  id BIGINT PRIMARY KEY DEFAULT BIGSERIAL,
+  id BIGSERIAL PRIMARY KEY,
   client VARCHAR(255) NOT NULL,
   description TEXT,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -93,7 +93,7 @@ CREATE POLICY "Users can delete their own teams"
 ```sql
 -- TABLA 2: Members (Miembros del equipo)
 CREATE TABLE members (
-  id BIGINT PRIMARY KEY DEFAULT BIGSERIAL,
+  id BIGSERIAL PRIMARY KEY,
   team_id BIGINT NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
@@ -162,7 +162,7 @@ CREATE POLICY "Users can delete members in their teams"
 ```sql
 -- TABLA 3: Evaluations (Calificaciones)
 CREATE TABLE evaluations (
-  id BIGINT PRIMARY KEY DEFAULT BIGSERIAL,
+  id BIGSERIAL PRIMARY KEY,
   member_id BIGINT NOT NULL REFERENCES members(id) ON DELETE CASCADE,
   quarter VARCHAR(2) NOT NULL CHECK (quarter IN ('Q1', 'Q2', 'Q3', 'Q4')),
   competency_id VARCHAR(50) NOT NULL,
@@ -239,7 +239,7 @@ CREATE POLICY "Users can delete evaluations of their members"
 ```sql
 -- TABLA 4: Evidence (Evidencias/Justificaciones)
 CREATE TABLE evidence (
-  id BIGINT PRIMARY KEY DEFAULT BIGSERIAL,
+  id BIGSERIAL PRIMARY KEY,
   member_id BIGINT NOT NULL REFERENCES members(id) ON DELETE CASCADE,
   quarter VARCHAR(2) NOT NULL CHECK (quarter IN ('Q1', 'Q2', 'Q3', 'Q4')),
   competency_id VARCHAR(50) NOT NULL,

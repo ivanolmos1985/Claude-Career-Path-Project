@@ -65,7 +65,7 @@
 
 | Columna | Tipo | Restricciones | Descripción |
 |---------|------|---------------|-------------|
-| id | BIGINT | PRIMARY KEY, AUTO | ID único del equipo |
+| id | BIGSERIAL | PRIMARY KEY, AUTO | ID único del equipo |
 | client | VARCHAR(255) | NOT NULL | Nombre del cliente |
 | description | TEXT | NULL | Descripción del equipo |
 | user_id | UUID | FK users, NOT NULL | Usuario propietario |
