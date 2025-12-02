@@ -2,6 +2,12 @@ import React, {useEffect, useState} from 'react'
 import { useApp } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '../hooks/useQuery'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+)
 
 export default function EvaluationPage(){
   const { teams, updateMember, getCompetencies } = useApp()
@@ -19,14 +25,54 @@ export default function EvaluationPage(){
 
   const comps = getCompetencies(member.role)
 
-  const setRating = (q, compId, rating) => {
-    const patch = { evaluations: {...member.evaluations, [q]: {...member.evaluations[q], [compId]: rating}} }
-    updateMember(team.id, member.id, patch)
+  const setRating = async (q, compId, rating) => {
+    try {
+      // Actualizar estado local primero para feedback inmediato
+      const patch = { evaluations: {...member.evaluations, [q]: {...member.evaluations[q], [compId]: rating}} }
+      updateMember(team.id, member.id, patch)
+
+      // Guardar a Supabase
+      const { error } = await supabase
+        .from('evaluations')
+        .upsert({
+          member_id: member.id,
+          quarter: q,
+          competency_id: compId,
+          rating: rating
+        }, { onConflict: 'member_id,quarter,competency_id' })
+
+      if (error) {
+        console.error('Error saving rating:', error)
+        alert(`Error al guardar evaluación: ${error.message}`)
+      }
+    } catch (err) {
+      console.error('Error in setRating:', err)
+    }
   }
 
-  const setEvidence = (q, compId, text) => {
-    const patch = { evidence: {...member.evidence, [q]: {...member.evidence[q], [compId]: text}} }
-    updateMember(team.id, member.id, patch)
+  const setEvidence = async (q, compId, text) => {
+    try {
+      // Actualizar estado local primero para feedback inmediato
+      const patch = { evidence: {...member.evidence, [q]: {...member.evidence[q], [compId]: text}} }
+      updateMember(team.id, member.id, patch)
+
+      // Guardar a Supabase
+      const { error } = await supabase
+        .from('evidence')
+        .upsert({
+          member_id: member.id,
+          quarter: q,
+          competency_id: compId,
+          description: text
+        }, { onConflict: 'member_id,quarter,competency_id' })
+
+      if (error) {
+        console.error('Error saving evidence:', error)
+        alert(`Error al guardar evidencia: ${error.message}`)
+      }
+    } catch (err) {
+      console.error('Error in setEvidence:', err)
+    }
   }
 
   const saveAndBack = () => {
