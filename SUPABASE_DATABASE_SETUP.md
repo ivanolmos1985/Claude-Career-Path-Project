@@ -327,64 +327,64 @@ CREATE INDEX idx_competencies_role ON competencies(role);
 
 -- INSERTAR COMPETENCIAS PARA DEVELOPER
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('tech', 'developer', 'Conocimientos Técnicos .NET', 20),
-  ('quality', 'developer', 'Calidad de Código', 15),
-  ('problem', 'developer', 'Resolución de Problemas', 15),
-  ('performance', 'developer', 'Performance & Optimization', 10),
-  ('collaboration', 'developer', 'Colaboración & Comunicación', 15),
-  ('autonomy', 'developer', 'Autonomía & Ownership', 10),
-  ('business', 'developer', 'Conocimiento FIGO', 10),
-  ('innovation', 'developer', 'Innovación & Mejora Continua', 5);
+  ('dev_tech', 'developer', 'Conocimientos Técnicos .NET', 20),
+  ('dev_quality', 'developer', 'Calidad de Código', 15),
+  ('dev_problem', 'developer', 'Resolución de Problemas', 15),
+  ('dev_performance', 'developer', 'Performance & Optimization', 10),
+  ('dev_collaboration', 'developer', 'Colaboración & Comunicación', 15),
+  ('dev_autonomy', 'developer', 'Autonomía & Ownership', 10),
+  ('dev_business', 'developer', 'Conocimiento FIGO', 10),
+  ('dev_innovation', 'developer', 'Innovación & Mejora Continua', 5);
 
 -- INSERTAR COMPETENCIAS PARA QA
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('testdomain', 'qa', 'Dominio de Testing', 20),
-  ('testdesign', 'qa', 'Diseño de Casos de Prueba', 15),
-  ('automation', 'qa', 'Automatización de Pruebas', 15),
-  ('bugs', 'qa', 'Detección & Documentación de Defectos', 15),
-  ('collaboration', 'qa', 'Colaboración & Comunicación', 15),
-  ('autonomy', 'qa', 'Autonomía & Ownership', 10),
-  ('business', 'qa', 'Conocimiento FIGO', 10);
+  ('qa_testdomain', 'qa', 'Dominio de Testing', 20),
+  ('qa_testdesign', 'qa', 'Diseño de Casos de Prueba', 15),
+  ('qa_automation', 'qa', 'Automatización de Pruebas', 15),
+  ('qa_bugs', 'qa', 'Detección & Documentación de Defectos', 15),
+  ('qa_collaboration', 'qa', 'Colaboración & Comunicación', 15),
+  ('qa_autonomy', 'qa', 'Autonomía & Ownership', 10),
+  ('qa_business', 'qa', 'Conocimiento FIGO', 10);
 
 -- INSERTAR COMPETENCIAS PARA PRODUCT OWNER
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('product', 'productowner', 'Gestión de Producto', 20),
-  ('requirements', 'productowner', 'Definición de Requerimientos', 15),
-  ('stakeholder', 'productowner', 'Gestión de Stakeholders', 15),
-  ('roadmap', 'productowner', 'Planificación de Roadmap', 15),
-  ('collaboration', 'productowner', 'Colaboración & Comunicación', 15),
-  ('business', 'productowner', 'Conocimiento FIGO', 10),
-  ('innovation', 'productowner', 'Innovación & Mejora Continua', 10);
+  ('po_product', 'productowner', 'Gestión de Producto', 20),
+  ('po_requirements', 'productowner', 'Definición de Requerimientos', 15),
+  ('po_stakeholder', 'productowner', 'Gestión de Stakeholders', 15),
+  ('po_roadmap', 'productowner', 'Planificación de Roadmap', 15),
+  ('po_collaboration', 'productowner', 'Colaboración & Comunicación', 15),
+  ('po_business', 'productowner', 'Conocimiento FIGO', 10),
+  ('po_innovation', 'productowner', 'Innovación & Mejora Continua', 10);
 
 -- INSERTAR COMPETENCIAS PARA SCRUM MASTER
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('agile', 'scrummaster', 'Conocimiento Ágil/Scrum', 20),
-  ('facilitation', 'scrummaster', 'Facilitación de Ceremonias', 15),
-  ('coaching', 'scrummaster', 'Coaching de Equipo', 15),
-  ('impediments', 'scrummaster', 'Gestión de Impedimentos', 15),
-  ('collaboration', 'scrummaster', 'Colaboración & Comunicación', 15),
-  ('problem', 'scrummaster', 'Resolución de Problemas', 10),
-  ('autonomy', 'scrummaster', 'Autonomía & Ownership', 10);
+  ('sm_agile', 'scrummaster', 'Conocimiento Ágil/Scrum', 20),
+  ('sm_facilitation', 'scrummaster', 'Facilitación de Ceremonias', 15),
+  ('sm_coaching', 'scrummaster', 'Coaching de Equipo', 15),
+  ('sm_impediments', 'scrummaster', 'Gestión de Impedimentos', 15),
+  ('sm_collaboration', 'scrummaster', 'Colaboración & Comunicación', 15),
+  ('sm_problem', 'scrummaster', 'Resolución de Problemas', 10),
+  ('sm_autonomy', 'scrummaster', 'Autonomía & Ownership', 10);
 
 -- INSERTAR COMPETENCIAS PARA UX/UI
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('design', 'uxui', 'Habilidades de Diseño', 20),
-  ('usability', 'uxui', 'Enfoque Centrado en Usuario', 20),
-  ('tools', 'uxui', 'Dominio de Herramientas (Figma, XD)', 15),
-  ('prototyping', 'uxui', 'Prototipado & Wireframing', 15),
-  ('collaboration', 'uxui', 'Colaboración & Comunicación', 15),
-  ('problem', 'uxui', 'Resolución de Problemas', 10),
-  ('innovation', 'uxui', 'Innovación & Mejora Continua', 5);
+  ('ux_design', 'uxui', 'Habilidades de Diseño', 20),
+  ('ux_usability', 'uxui', 'Enfoque Centrado en Usuario', 20),
+  ('ux_tools', 'uxui', 'Dominio de Herramientas (Figma, XD)', 15),
+  ('ux_prototyping', 'uxui', 'Prototipado & Wireframing', 15),
+  ('ux_collaboration', 'uxui', 'Colaboración & Comunicación', 15),
+  ('ux_problem', 'uxui', 'Resolución de Problemas', 10),
+  ('ux_innovation', 'uxui', 'Innovación & Mejora Continua', 5);
 
 -- INSERTAR COMPETENCIAS PARA DELIVERY MANAGER
 INSERT INTO competencies (id, role, name, weight) VALUES
-  ('planning', 'deliverymanager', 'Planificación & Scheduling', 20),
-  ('risk', 'deliverymanager', 'Gestión de Riesgos', 15),
-  ('budget', 'deliverymanager', 'Control Presupuestario', 15),
-  ('stakeholder', 'deliverymanager', 'Gestión de Stakeholders', 15),
-  ('collaboration', 'deliverymanager', 'Colaboración & Comunicación', 15),
-  ('problem', 'deliverymanager', 'Resolución de Problemas', 10),
-  ('business', 'deliverymanager', 'Conocimiento FIGO', 10);
+  ('dm_planning', 'deliverymanager', 'Planificación & Scheduling', 20),
+  ('dm_risk', 'deliverymanager', 'Gestión de Riesgos', 15),
+  ('dm_budget', 'deliverymanager', 'Control Presupuestario', 15),
+  ('dm_stakeholder', 'deliverymanager', 'Gestión de Stakeholders', 15),
+  ('dm_collaboration', 'deliverymanager', 'Colaboración & Comunicación', 15),
+  ('dm_problem', 'deliverymanager', 'Resolución de Problemas', 10),
+  ('dm_business', 'deliverymanager', 'Conocimiento FIGO', 10);
 ```
 
 **Ejecuta con Ctrl+Enter**
