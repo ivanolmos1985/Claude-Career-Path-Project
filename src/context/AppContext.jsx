@@ -81,17 +81,27 @@ export function AppProvider({children}){
         .insert([{ ...member, team_id: teamId }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error adding member:', error);
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.error('No data returned from insert');
+        throw new Error('No se guardó el miembro');
+      }
 
       const newMember = data[0];
       setTeams(prev => prev.map(t =>
         t.id === teamId
-          ? {...t, members: [...t.members, {...newMember, evaluations:{Q1:{},Q2:{},Q3:{},Q4:{}}, evidence:{Q1:{},Q2:{},Q3:{},Q4:{}}}]}
+          ? {...t, members: [...(t.members || []), {...newMember, evaluations:{Q1:{},Q2:{},Q3:{},Q4:{}}, evidence:{Q1:{},Q2:{},Q3:{},Q4:{}}}]}
           : t
       ));
       return newMember;
     } catch (error) {
       console.error('Error adding member:', error);
+      alert(`Error al agregar miembro: ${error.message || 'Error desconocido'}`);
+      throw error;
     }
   };
 

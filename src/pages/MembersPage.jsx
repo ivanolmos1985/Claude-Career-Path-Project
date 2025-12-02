@@ -14,11 +14,16 @@ export default function MembersPage(){
 
   useEffect(()=>{ if(!team && teams.length>0) navigate('/teams') },[teams,navigate,team])
 
-  const submit = () => {
+  const submit = async () => {
     if(!team) return alert('Selecciona un equipo')
     if(!name || !email) return alert('Completa nombre y email')
-    addMember(team.id,{ name, role, level, levelTarget, email })
-    setName(''); setEmail('')
+    try {
+      await addMember(team.id, { name, role, level, levelTarget, email })
+      setName(''); setEmail('')
+      alert('✅ Miembro agregado exitosamente')
+    } catch (error) {
+      console.error('Error in submit:', error)
+    }
   }
 
   return (
