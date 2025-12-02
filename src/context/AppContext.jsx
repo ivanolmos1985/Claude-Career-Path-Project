@@ -1,46 +1,149 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { competenciesByRole } from '../data/competencies';
+import { createClient } from '@supabase/supabase-js';
+import { useAuth } from './AuthContext';
 
-const STORAGE_KEY = 'career_app_v1';
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
 
 const AppContext = createContext();
 export function useApp(){ return useContext(AppContext) }
 
 export function AppProvider({children}){
-  const [teams, setTeams] = useState(()=> {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY))?.teams || [] } catch { return [] }
-  });
+  const { user } = useAuth();
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Cargar teams de Supabase cuando el usuario está autenticado
   useEffect(()=> {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ teams }));
-  }, [teams]);
+    if (!user) {
+      setTeams([]);
+      setLoading(false);
+      return;
+    }
 
-  const addTeam = (team) => {
-    const t = { id: Date.now(), ...team, members: [] };
-    setTeams(prev=>[...prev,t]);
-    return t;
+    const loadTeams = async () => {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('teams')
+          .select('*, members(*)')
+          .eq('user_id', user.id);
+
+        if (error) throw error;
+
+        // Transformar datos de Supabase al formato de la app
+        const formattedTeams = (data || []).map(team => ({
+          ...team,
+          members: (team.members || []).map(member => ({
+            ...member,
+            evaluations: { Q1: {}, Q2: {}, Q3: {}, Q4: {} },
+            evidence: { Q1: {}, Q2: {}, Q3: {}, Q4: {} }
+          }))
+        }));
+
+        setTeams(formattedTeams);
+      } catch (error) {
+        console.error('Error loading teams:', error);
+        setTeams([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadTeams();
+  }, [user]);
+
+  const addTeam = async (team) => {
+    if (!user) return;
+    try {
+      const { data, error } = await supabase
+        .from('teams')
+        .insert([{ ...team, user_id: user.id }])
+        .select();
+
+      if (error) throw error;
+
+      const newTeam = data[0];
+      setTeams(prev => [...prev, { ...newTeam, members: [] }]);
+      return newTeam;
+    } catch (error) {
+      console.error('Error adding team:', error);
+    }
   };
 
-  const addMember = (teamId, member) => {
-    setTeams(prev=> prev.map(t=> t.id===teamId ? {...t, members:[...t.members, {...member, id: Date.now(), evaluations:{Q1:{},Q2:{},Q3:{},Q4:{}}, evidence:{Q1:{},Q2:{},Q3:{},Q4:{}}}]} : t));
+  const addMember = async (teamId, member) => {
+    try {
+      const { data, error } = await supabase
+        .from('members')
+        .insert([{ ...member, team_id: teamId }])
+        .select();
+
+      if (error) throw error;
+
+      const newMember = data[0];
+      setTeams(prev => prev.map(t =>
+        t.id === teamId
+          ? {...t, members: [...t.members, {...newMember, evaluations:{Q1:{},Q2:{},Q3:{},Q4:{}}, evidence:{Q1:{},Q2:{},Q3:{},Q4:{}}}]}
+          : t
+      ));
+      return newMember;
+    } catch (error) {
+      console.error('Error adding member:', error);
+    }
   };
 
-  const updateMember = (teamId, memberId, patch) => {
-    setTeams(prev=> prev.map(t=> {
-      if(t.id!==teamId) return t;
-      return {...t, members: t.members.map(m=> m.id===memberId ? {...m, ...patch} : m)};
-    }))
+  const updateMember = async (teamId, memberId, patch) => {
+    try {
+      const { error } = await supabase
+        .from('members')
+        .update(patch)
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      setTeams(prev=> prev.map(t=> {
+        if(t.id!==teamId) return t;
+        return {...t, members: t.members.map(m=> m.id===memberId ? {...m, ...patch} : m)};
+      }))
+    } catch (error) {
+      console.error('Error updating member:', error);
+    }
   };
 
-  const deleteTeam = (teamId) => {
-    setTeams(prev => prev.filter(t => t.id !== teamId));
+  const deleteTeam = async (teamId) => {
+    try {
+      const { error } = await supabase
+        .from('teams')
+        .delete()
+        .eq('id', teamId);
+
+      if (error) throw error;
+
+      setTeams(prev => prev.filter(t => t.id !== teamId));
+    } catch (error) {
+      console.error('Error deleting team:', error);
+    }
   };
 
-  const deleteMember = (teamId, memberId) => {
-    setTeams(prev=> prev.map(t=> {
-      if(t.id!==teamId) return t;
-      return {...t, members: t.members.filter(m=> m.id!==memberId)};
-    }))
+  const deleteMember = async (teamId, memberId) => {
+    try {
+      const { error } = await supabase
+        .from('members')
+        .delete()
+        .eq('id', memberId);
+
+      if (error) throw error;
+
+      setTeams(prev=> prev.map(t=> {
+        if(t.id!==teamId) return t;
+        return {...t, members: t.members.filter(m=> m.id!==memberId)};
+      }))
+    } catch (error) {
+      console.error('Error deleting member:', error);
+    }
   };
 
   const getCompetencies = (role) => competenciesByRole[role] || competenciesByRole['developer'];
