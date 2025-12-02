@@ -76,9 +76,19 @@ export function AppProvider({children}){
 
   const addMember = async (teamId, member) => {
     try {
+      // Convertir camelCase a snake_case para Supabase
+      const memberData = {
+        name: member.name,
+        email: member.email,
+        role: member.role,
+        level: member.level,
+        level_target: member.levelTarget,
+        team_id: teamId
+      };
+
       const { data, error } = await supabase
         .from('members')
-        .insert([{ ...member, team_id: teamId }])
+        .insert([memberData])
         .select();
 
       if (error) {
