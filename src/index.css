@@ -1,0 +1,15 @@
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background: linear-gradient(135deg,#0066ff 0%,#2563eb 50%,#1e40af 100%);min-height:100vh;padding:20px;color:#111}
+.container{max-width:1200px;margin:0 auto;background:white;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+.header{background:linear-gradient(135deg,#2563eb 0%,#1e40af 100%);color:white;padding:20px;display:flex;align-items:center;justify-content:space-between}
+.btn{padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+.btn-primary{background:#2563eb;color:white}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{padding:16px;border-bottom:1px solid #eee}
+.list{display:grid;gap:12px;padding:12px}
+.sidebar{width:220px;background:#1f2937;color:white;padding:18px}
+.layout{display:flex;gap:16px}
+.content{padding:18px;flex:1}
+.nav{display:flex;gap:8px;margin-bottom:12px}
+input,select,textarea{padding:10px;border:1px solid #ddd;border-radius:8px;width:100%}
