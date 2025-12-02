@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { AppProvider } from './context/AppContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import TeamsPage from './pages/TeamsPage'
@@ -96,8 +97,12 @@ function AppController() {
     )
   }
 
-  // usuario presente → mostrar app real
-  return <AppShell />
+  // usuario presente → mostrar app real con AppProvider
+  return (
+    <AppProvider>
+      <AppShell />
+    </AppProvider>
+  )
 }
 
 // ---- app principal ----

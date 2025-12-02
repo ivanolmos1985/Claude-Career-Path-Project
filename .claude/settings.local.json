@@ -8,7 +8,8 @@
       "Bash(git push)",
       "Bash(echo:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\ndocs: Documentación completa de base de datos Supabase\n\n- QUICK_START_DATABASE.md: Guía rápida 5 minutos\n- SUPABASE_DATABASE_SETUP.md: Implementación paso a paso\n- DATABASE_SCHEMA.md: Esquema técnico detallado\n- README_DATABASE.md: Índice y referencia\n\nTablas a crear:\n- teams (equipos/proyectos)\n- members (miembros de equipos)\n- evaluations (calificaciones por trimestre)\n- evidence (justificaciones)\n- competencies (competencias por rol - datos estáticos)\n\nIncluye:\n- Scripts SQL completos listos para copiar-pegar\n- Row Level Security (RLS) para seguridad\n- Índices para mejor rendimiento\n- Políticas de acceso por usuario\n- 42 competencias por 6 roles diferentes\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []
