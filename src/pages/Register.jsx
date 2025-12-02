@@ -70,25 +70,45 @@ export default function RegisterPage() {
         <h2 style={{ margin: 0, textAlign: "center" }}>Crear Cuenta</h2>
 
         {success ? (
-          <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: 15 }}>
-              🎉 Tu cuenta fue creada correctamente.
-              <br />
-              Revisa tu correo para confirmar tu cuenta.
+          <div style={{
+            textAlign: "center",
+            background: "#d4edda",
+            border: "2px solid #28a745",
+            borderRadius: 8,
+            padding: 20,
+            margin: "0 -30px -30px -30px"
+          }}>
+            <p style={{
+              fontSize: 18,
+              fontWeight: "bold",
+              color: "#155724",
+              margin: "0 0 10px 0"
+            }}>
+              ✅ ¡Cuenta creada exitosamente!
             </p>
 
-            <Link to="/login">
+            <p style={{
+              fontSize: 14,
+              color: "#155724",
+              margin: "0 0 15px 0"
+            }}>
+              Se envió un correo de confirmación a tu bandeja de entrada.
+              <br />
+              Verifica tu email para confirmar la cuenta.
+            </p>
+
+            <Link to="/login" style={{ textDecoration: "none" }}>
               <button
                 style={{
-                  padding: 10,
+                  padding: 12,
                   width: "100%",
-                  marginTop: 10,
                   border: "none",
-                  background: "#007bff",
+                  background: "#28a745",
                   color: "white",
                   borderRadius: 8,
                   cursor: "pointer",
-                  fontSize: 16
+                  fontSize: 16,
+                  fontWeight: "bold"
                 }}
               >
                 Ir a Iniciar Sesión

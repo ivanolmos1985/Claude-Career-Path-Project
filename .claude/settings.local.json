@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Mejorar UX y agregar exportación de reportes a PDF\n\n- Mejora visual del mensaje de éxito en Register.jsx con fondo verde y checkmark\n- Implementa exportación de reportes a PDF en DecisionPage.jsx con html2pdf\n- Reporte PDF incluye: datos del empleado, equipo, evaluación y desglose por trimestre\n- Instala dependencia html2pdf.js para generación de PDF\n- Actualiza documentación de deployment y testing\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

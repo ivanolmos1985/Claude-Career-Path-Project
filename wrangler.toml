@@ -1,0 +1,21 @@
+# Cloudflare Pages configuration
+name = "career-path-react"
+type = "javascript"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "./"
+watch_paths = ["src/**/*.jsx"]
+
+# Build watch paths
+[build.upload]
+format = "service-worker"
+
+# Environment variables (set in Cloudflare dashboard)
+[env.production]
+# VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY will be set in Cloudflare Pages settings
