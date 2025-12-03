@@ -17,7 +17,8 @@ export function AppProvider({children}){
   const [loading, setLoading] = useState(true);
   const [isAdminUser, setIsAdminUser] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
-  const [allUsers, setAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); // Solo usuarios online (para avatar card)
+  const [allUsersForAdmin, setAllUsersForAdmin] = useState([]); // Todos los usuarios (para selector admin)
 
   // Verificar si el usuario actual es admin
   useEffect(() => {
@@ -43,7 +44,7 @@ export function AppProvider({children}){
     checkIfAdmin();
   }, [user]);
 
-  // Cargar lista de usuarios conectados (online_users table)
+  // Cargar lista de usuarios conectados (online_users table) - Para avatar card
   useEffect(() => {
     const loadOnlineUsers = async () => {
       try {
@@ -62,6 +63,31 @@ export function AppProvider({children}){
 
     loadOnlineUsers();
   }, []);
+
+  // Cargar lista de TODOS los usuarios (from users table) - Para selector admin
+  useEffect(() => {
+    if (!isAdminUser) {
+      setAllUsersForAdmin([]);
+      return;
+    }
+
+    const loadAllUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, email, full_name')
+          .order('full_name, email');
+
+        if (error) throw error;
+        setAllUsersForAdmin(data || []);
+      } catch (error) {
+        console.error('Error loading all users:', error);
+        setAllUsersForAdmin([]);
+      }
+    };
+
+    loadAllUsers();
+  }, [isAdminUser]);
 
   // Cargar teams de Supabase cuando el usuario está autenticado
   useEffect(()=> {
@@ -288,7 +314,8 @@ export function AppProvider({children}){
     isAdminUser,
     selectedUserId,
     setSelectedUserId,
-    allUsers,
+    allUsers, // Solo usuarios online (para avatar card)
+    allUsersForAdmin, // Todos los usuarios (para selector admin)
     markUserOnline,
     updateUserActivity,
     markUserOffline

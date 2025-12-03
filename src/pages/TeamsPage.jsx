@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 
 export default function TeamsPage(){
-  const { teams, addTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsers } = useApp()
+  const { teams, addTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
   const navigate = useNavigate()
   const [client, setClient] = useState('')
   const [desc, setDesc] = useState('')
@@ -38,7 +38,7 @@ export default function TeamsPage(){
             style={{ width: '100%', padding: 10, fontSize: '14px', borderColor: '#0066ff' }}
           >
             <option value="">Ver mis propios datos</option>
-            {allUsers.map(u => (
+            {allUsersForAdmin.map(u => (
               <option key={u.id} value={u.id}>
                 {u.full_name || u.email}
               </option>
