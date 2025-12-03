@@ -114,9 +114,20 @@ GRANT EXECUTE ON FUNCTION cleanup_inactive_users() TO authenticated;
 - Updated `loadAllUsers()` to fetch from `online_users` table instead of `users` table
 - Removed dependency on `isAdminUser` - now all users see the same online users list
 - Added three new functions exported in context:
-  - `markUserOnline(userId, email, fullName)` - Insert/upsert user to online_users
+  - `markUserOnline(userId, email)` - Fetches user from users table, inserts/upserts to online_users with full_name from users table
   - `updateUserActivity(userId)` - Update last_activity timestamp
   - `markUserOffline(userId)` - Delete from online_users
+
+**Key Data Flow:**
+```
+users table (id, email, full_name)
+    ↓
+markUserOnline() fetches from users table
+    ↓
+Inserts into online_users (id, email, full_name synced from users)
+    ↓
+AppContext loads from online_users for dropdown display
+```
 
 **Code:**
 ```javascript
@@ -139,6 +150,36 @@ useEffect(() => {
 
   loadOnlineUsers();
 }, []);
+
+// Mark user as online when they log in
+const markUserOnline = async (userId, email) => {
+  try {
+    // Fetch user data from users table to get full_name
+    const { data: userData, error: userError } = await supabase
+      .from('users')
+      .select('id, email, full_name')
+      .eq('id', userId)
+      .single();
+
+    if (userError) throw userError;
+
+    const { error } = await supabase
+      .from('online_users')
+      .upsert({
+        id: userId,
+        email: userData.email,
+        full_name: userData.full_name,
+        last_activity: new Date(),
+        updated_at: new Date()
+      }, {
+        onConflict: 'id'
+      });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error marking user online:', error);
+  }
+};
 ```
 
 ---
