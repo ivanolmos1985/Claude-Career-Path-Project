@@ -148,14 +148,8 @@ function Header() {
       <div className="user-info-section">
         {/* Información del usuario actual */}
         <div className="user-profile">
-          <div className="user-detail">
-            <div className="user-label">Nombre</div>
-            <div className="user-value">{userProfile?.full_name || user?.email?.split('@')[0]}</div>
-          </div>
-          <div className="user-detail">
-            <div className="user-label">Email</div>
-            <div className="user-value-email">{user?.email}</div>
-          </div>
+          <div className="user-value">{userProfile?.full_name || user?.email?.split('@')[0]}</div>
+          <div className="user-value-email">{user?.email}</div>
           {isAdminUser && (
             <div className="admin-indicator">ADMIN</div>
           )}
