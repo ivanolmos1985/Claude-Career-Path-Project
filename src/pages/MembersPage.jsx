@@ -5,7 +5,7 @@ import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
 
 export default function MembersPage(){
-  const { teams, addMember, deleteMember } = useApp()
+  const { teams, addMember, updateMember, deleteMember } = useApp()
   const navigate = useNavigate()
   const loc = useLocation()
   const params = new URLSearchParams(loc.search)
@@ -13,8 +13,10 @@ export default function MembersPage(){
   const team = teams.find(t=>t.id===teamId)
   const [name,setName]=useState(''); const [role,setRole]=useState('developer')
   const [level,setLevel]=useState('jr'); const [levelTarget,setLevelTarget]=useState('mid'); const [email,setEmail]=useState('')
+  const [memberToEdit, setMemberToEdit] = useState(null)
   const [memberToDelete, setMemberToDelete] = useState(null)
   const addModal = useModal()
+  const editModal = useModal()
   const deleteModal = useModal()
 
   useEffect(()=>{ if(!team && teams.length>0) navigate('/teams') },[teams,navigate,team])
@@ -29,6 +31,36 @@ export default function MembersPage(){
       addModal.close()
     } catch (error) {
       console.error('Error in submit:', error)
+    }
+  }
+
+  const handleEditClick = (member) => {
+    setMemberToEdit(member)
+    setName(member.name)
+    setRole(member.role)
+    setLevel(member.level)
+    setLevelTarget(member.level_target)
+    setEmail(member.email)
+    editModal.open()
+  }
+
+  const handleEditConfirm = async () => {
+    if(!name || !email || !memberToEdit) return
+    try {
+      const patch = {
+        name,
+        role,
+        level,
+        level_target: levelTarget,
+        email
+      }
+      await updateMember(team.id, memberToEdit.id, patch)
+      setName(''); setEmail('')
+      setRole('developer'); setLevel('jr'); setLevelTarget('mid')
+      setMemberToEdit(null)
+      editModal.close()
+    } catch (error) {
+      console.error('Error updating member:', error)
     }
   }
 
@@ -122,6 +154,13 @@ export default function MembersPage(){
                       </button>
                       <button
                         className="btn"
+                        onClick={() => handleEditClick(m)}
+                        style={{ background: '#f59e0b', color: 'white', whiteSpace: 'nowrap' }}
+                      >
+                        ✏️ Editar
+                      </button>
+                      <button
+                        className="btn"
                         onClick={() => handleDeleteClick(m)}
                         style={{ background: '#dc3545', color: 'white', whiteSpace: 'nowrap' }}
                       >
@@ -203,6 +242,79 @@ export default function MembersPage(){
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 style={{ borderColor: '#0066ff' }}
+              />
+            </div>
+          </Modal>
+
+          {/* Modal Editar Miembro */}
+          <Modal
+            isOpen={editModal.isOpen}
+            title="✏️ Editar Miembro"
+            onClose={editModal.close}
+            onConfirm={handleEditConfirm}
+            confirmText="Guardar Cambios"
+            cancelText="Cancelar"
+          >
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Nombre Completo
+              </label>
+              <input
+                placeholder="Nombre del miembro"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                style={{ borderColor: '#f59e0b', marginBottom: 12 }}
+              />
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Rol
+              </label>
+              <select
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                style={{ borderColor: '#f59e0b', marginBottom: 12 }}
+              >
+                <option value="developer">Desarrollador</option>
+                <option value="qa">QA</option>
+                <option value="productowner">Product Owner</option>
+                <option value="scrummaster">Scrum Master</option>
+                <option value="uxui">UX/UI</option>
+                <option value="deliverymanager">Delivery Manager</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Nivel Actual
+              </label>
+              <select
+                value={level}
+                onChange={e => setLevel(e.target.value)}
+                style={{ borderColor: '#f59e0b', marginBottom: 12 }}
+              >
+                <option value="jr">Junior</option>
+                <option value="mid">Mid</option>
+                <option value="sr">Senior</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Meta de Nivel
+              </label>
+              <select
+                value={levelTarget}
+                onChange={e => setLevelTarget(e.target.value)}
+                style={{ borderColor: '#f59e0b', marginBottom: 12 }}
+              >
+                <option value="mid">Mid</option>
+                <option value="sr">Senior</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Email
+              </label>
+              <input
+                placeholder="email@example.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={{ borderColor: '#f59e0b' }}
               />
             </div>
           </Modal>

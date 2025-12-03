@@ -295,6 +295,21 @@ export function AppProvider({children}){
     }
   };
 
+  const updateTeam = async (teamId, patch) => {
+    try {
+      const { error } = await supabase
+        .from('teams')
+        .update(patch)
+        .eq('id', teamId);
+
+      if (error) throw error;
+
+      setTeams(prev => prev.map(t => t.id === teamId ? { ...t, ...patch } : t));
+    } catch (error) {
+      console.error('Error updating team:', error);
+    }
+  };
+
   const addMember = async (teamId, member) => {
     try {
       // Convertir camelCase a snake_case para Supabase
@@ -450,6 +465,7 @@ export function AppProvider({children}){
   return <AppContext.Provider value={{
     teams,
     addTeam,
+    updateTeam,
     addMember,
     updateMember,
     deleteTeam,

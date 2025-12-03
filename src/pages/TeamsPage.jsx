@@ -5,12 +5,14 @@ import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
 
 export default function TeamsPage(){
-  const { teams, addTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
+  const { teams, addTeam, updateTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
   const navigate = useNavigate()
   const createModal = useModal()
+  const editModal = useModal()
   const deleteModal = useModal()
   const [client, setClient] = useState('')
   const [desc, setDesc] = useState('')
+  const [teamToEdit, setTeamToEdit] = useState(null)
   const [teamToDelete, setTeamToDelete] = useState(null)
 
   const handleCreate = () => {
@@ -19,6 +21,22 @@ export default function TeamsPage(){
     setClient('')
     setDesc('')
     createModal.close()
+  }
+
+  const handleEditClick = (team) => {
+    setTeamToEdit(team)
+    setClient(team.client)
+    setDesc(team.description || '')
+    editModal.open()
+  }
+
+  const handleEditConfirm = () => {
+    if(!client || !teamToEdit) return
+    updateTeam(teamToEdit.id, { client, description: desc })
+    setClient('')
+    setDesc('')
+    setTeamToEdit(null)
+    editModal.close()
   }
 
   const handleDeleteClick = (team) => {
@@ -102,6 +120,13 @@ export default function TeamsPage(){
                 </button>
                 <button
                   className="btn"
+                  onClick={() => handleEditClick(t)}
+                  style={{ background: '#f59e0b', color: 'white' }}
+                >
+                  ✏️ Editar
+                </button>
+                <button
+                  className="btn"
                   onClick={() => handleDeleteClick(t)}
                   style={{ background: '#dc3545', color: 'white' }}
                 >
@@ -141,6 +166,38 @@ export default function TeamsPage(){
             onChange={e => setDesc(e.target.value)}
             rows={3}
             style={{ borderColor: '#0066ff', resize: 'none' }}
+          />
+        </div>
+      </Modal>
+
+      {/* Modal Editar Equipo */}
+      <Modal
+        isOpen={editModal.isOpen}
+        title="✏️ Editar Equipo"
+        onClose={editModal.close}
+        onConfirm={handleEditConfirm}
+        confirmText="Guardar Cambios"
+        cancelText="Cancelar"
+      >
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Cliente/Proyecto
+          </label>
+          <input
+            placeholder="Nombre del cliente o proyecto"
+            value={client}
+            onChange={e => setClient(e.target.value)}
+            style={{ borderColor: '#f59e0b' }}
+          />
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Descripción (Opcional)
+          </label>
+          <textarea
+            placeholder="Descripción del equipo"
+            value={desc}
+            onChange={e => setDesc(e.target.value)}
+            rows={3}
+            style={{ borderColor: '#f59e0b', resize: 'none' }}
           />
         </div>
       </Modal>
