@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import { useApp } from '../context/AppContext'
 import { useNavigate, useLocation } from 'react-router-dom'
+import Modal from '../components/Modal'
+import useModal from '../hooks/useModal'
 
 export default function MembersPage(){
   const { teams, addMember, deleteMember } = useApp()
@@ -11,18 +13,35 @@ export default function MembersPage(){
   const team = teams.find(t=>t.id===teamId)
   const [name,setName]=useState(''); const [role,setRole]=useState('developer')
   const [level,setLevel]=useState('jr'); const [levelTarget,setLevelTarget]=useState('mid'); const [email,setEmail]=useState('')
+  const [memberToDelete, setMemberToDelete] = useState(null)
+  const addModal = useModal()
+  const deleteModal = useModal()
 
   useEffect(()=>{ if(!team && teams.length>0) navigate('/teams') },[teams,navigate,team])
 
-  const submit = async () => {
+  const handleAddMember = async () => {
     if(!team) return alert('Selecciona un equipo')
     if(!name || !email) return alert('Completa nombre y email')
     try {
       await addMember(team.id, { name, role, level, levelTarget, email })
       setName(''); setEmail('')
-      alert('✅ Miembro agregado exitosamente')
+      setRole('developer'); setLevel('jr'); setLevelTarget('mid')
+      addModal.close()
     } catch (error) {
       console.error('Error in submit:', error)
+    }
+  }
+
+  const handleDeleteClick = (member) => {
+    setMemberToDelete(member)
+    deleteModal.open()
+  }
+
+  const handleConfirmDelete = () => {
+    if(memberToDelete) {
+      deleteMember(team.id, memberToDelete.id)
+      deleteModal.close()
+      setMemberToDelete(null)
     }
   }
 
@@ -57,59 +76,13 @@ export default function MembersPage(){
             </div>
           </div>
 
-          <div className="card" style={{ marginBottom: 20, padding: 20 }}>
-            <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18 }}>
-              ➕ Agregar Nuevo Miembro
-            </h3>
-            <div className="form-row">
-              <input
-                placeholder="Nombre completo"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
-              />
-              <select
-                value={role}
-                onChange={e => setRole(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
-              >
-                <option value="developer">Desarrollador</option>
-                <option value="qa">QA</option>
-                <option value="productowner">Product Owner</option>
-                <option value="scrummaster">Scrum Master</option>
-                <option value="uxui">UX/UI</option>
-                <option value="deliverymanager">Delivery Manager</option>
-              </select>
-              <select
-                value={level}
-                onChange={e => setLevel(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
-              >
-                <option value="jr">Junior</option>
-                <option value="mid">Mid</option>
-                <option value="sr">Senior</option>
-              </select>
-              <select
-                value={levelTarget}
-                onChange={e => setLevelTarget(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
-              >
-                <option value="mid">Mid</option>
-                <option value="sr">Senior</option>
-              </select>
-              <input
-                placeholder="Email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
-              />
-            </div>
-            <div style={{ marginTop: 12 }}>
-              <button className="btn btn-primary" onClick={submit} style={{ width: '100%' }}>
-                ➕ Agregar Miembro
-              </button>
-            </div>
-          </div>
+          <button
+            className="btn btn-primary"
+            onClick={addModal.open}
+            style={{ marginBottom: 20 }}
+          >
+            ➕ Agregar Nuevo Miembro
+          </button>
 
           <div style={{ marginTop: 24 }}>
             <h2 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 22, fontWeight: 700 }}>
@@ -149,9 +122,7 @@ export default function MembersPage(){
                       </button>
                       <button
                         className="btn"
-                        onClick={() => {
-                          if (window.confirm(`¿Eliminar miembro "${m.name}"?`)) deleteMember(team.id, m.id)
-                        }}
+                        onClick={() => handleDeleteClick(m)}
                         style={{ background: '#dc3545', color: 'white', whiteSpace: 'nowrap' }}
                       >
                         🗑️ Eliminar
@@ -162,6 +133,99 @@ export default function MembersPage(){
               ))}
             </div>
           </div>
+
+          {/* Modal Agregar Miembro */}
+          <Modal
+            isOpen={addModal.isOpen}
+            title="➕ Agregar Nuevo Miembro"
+            onClose={addModal.close}
+            onConfirm={handleAddMember}
+            confirmText="Agregar"
+            cancelText="Cancelar"
+          >
+            <div>
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Nombre Completo
+              </label>
+              <input
+                placeholder="Nombre del miembro"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+              />
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Rol
+              </label>
+              <select
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+              >
+                <option value="developer">Desarrollador</option>
+                <option value="qa">QA</option>
+                <option value="productowner">Product Owner</option>
+                <option value="scrummaster">Scrum Master</option>
+                <option value="uxui">UX/UI</option>
+                <option value="deliverymanager">Delivery Manager</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Nivel Actual
+              </label>
+              <select
+                value={level}
+                onChange={e => setLevel(e.target.value)}
+                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+              >
+                <option value="jr">Junior</option>
+                <option value="mid">Mid</option>
+                <option value="sr">Senior</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Meta de Nivel
+              </label>
+              <select
+                value={levelTarget}
+                onChange={e => setLevelTarget(e.target.value)}
+                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+              >
+                <option value="mid">Mid</option>
+                <option value="sr">Senior</option>
+              </select>
+
+              <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+                Email
+              </label>
+              <input
+                placeholder="email@example.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                style={{ borderColor: '#0066ff' }}
+              />
+            </div>
+          </Modal>
+
+          {/* Modal Confirmar Eliminar Miembro */}
+          <Modal
+            isOpen={deleteModal.isOpen}
+            title="⚠️ Eliminar Miembro"
+            onClose={deleteModal.close}
+            onConfirm={handleConfirmDelete}
+            confirmText="Eliminar"
+            cancelText="Cancelar"
+            isDanger={true}
+          >
+            <div>
+              <p style={{ margin: 0, color: '#374151', lineHeight: 1.6 }}>
+                ¿Está seguro de que desea eliminar a <strong>"{memberToDelete?.name}"</strong>?
+              </p>
+              <p style={{ margin: '12px 0 0 0', color: '#6b7280', fontSize: 13 }}>
+                Esta acción no se puede deshacer. Se eliminarán todas las evaluaciones asociadas.
+              </p>
+            </div>
+          </Modal>
         </>
       )}
     </div>
