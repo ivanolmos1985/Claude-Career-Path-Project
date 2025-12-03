@@ -1,17 +1,37 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
+import Modal from '../components/Modal'
+import useModal from '../hooks/useModal'
 
 export default function TeamsPage(){
   const { teams, addTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
   const navigate = useNavigate()
+  const createModal = useModal()
+  const deleteModal = useModal()
   const [client, setClient] = useState('')
   const [desc, setDesc] = useState('')
+  const [teamToDelete, setTeamToDelete] = useState(null)
 
-  const create = () => {
-    if(!client) return alert('Cliente requerido')
+  const handleCreate = () => {
+    if(!client) return
     addTeam({ client, description: desc })
-    setClient(''); setDesc('')
+    setClient('')
+    setDesc('')
+    createModal.close()
+  }
+
+  const handleDeleteClick = (team) => {
+    setTeamToDelete(team)
+    deleteModal.open()
+  }
+
+  const handleConfirmDelete = () => {
+    if(teamToDelete) {
+      deleteTeam(teamToDelete.id)
+      deleteModal.close()
+      setTeamToDelete(null)
+    }
   }
 
   return (
@@ -47,28 +67,13 @@ export default function TeamsPage(){
         </div>
       )}
 
-      <div className="card" style={{ marginBottom: 20, padding: 20 }}>
-        <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18 }}>
-          ➕ Crear Nuevo Equipo
-        </h3>
-        <div className="form-row">
-          <input
-            placeholder="Cliente/Proyecto"
-            value={client}
-            onChange={e => setClient(e.target.value)}
-            style={{ borderColor: '#0066ff' }}
-          />
-          <input
-            placeholder="Descripción"
-            value={desc}
-            onChange={e => setDesc(e.target.value)}
-            style={{ borderColor: '#0066ff' }}
-          />
-          <button className="btn btn-primary" onClick={create} style={{ whiteSpace: 'nowrap' }}>
-            ➕ Crear
-          </button>
-        </div>
-      </div>
+      <button
+        className="btn btn-primary"
+        onClick={createModal.open}
+        style={{ marginBottom: 20 }}
+      >
+        ➕ Crear Nuevo Equipo
+      </button>
 
       <div className="list">
         {teams.length === 0 && (
@@ -97,7 +102,7 @@ export default function TeamsPage(){
                 </button>
                 <button
                   className="btn"
-                  onClick={() => { if (window.confirm(`¿Eliminar equipo "${t.client}"?`)) deleteTeam(t.id) }}
+                  onClick={() => handleDeleteClick(t)}
                   style={{ background: '#dc3545', color: 'white' }}
                 >
                   Eliminar
@@ -107,6 +112,58 @@ export default function TeamsPage(){
           </div>
         ))}
       </div>
+
+      {/* Modal Crear Equipo */}
+      <Modal
+        isOpen={createModal.isOpen}
+        title="➕ Crear Nuevo Equipo"
+        onClose={createModal.close}
+        onConfirm={handleCreate}
+        confirmText="Crear"
+        cancelText="Cancelar"
+      >
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Cliente/Proyecto
+          </label>
+          <input
+            placeholder="Nombre del cliente o proyecto"
+            value={client}
+            onChange={e => setClient(e.target.value)}
+            style={{ borderColor: '#0066ff' }}
+          />
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Descripción (Opcional)
+          </label>
+          <textarea
+            placeholder="Descripción del equipo"
+            value={desc}
+            onChange={e => setDesc(e.target.value)}
+            rows={3}
+            style={{ borderColor: '#0066ff', resize: 'none' }}
+          />
+        </div>
+      </Modal>
+
+      {/* Modal Confirmar Eliminar */}
+      <Modal
+        isOpen={deleteModal.isOpen}
+        title="⚠️ Eliminar Equipo"
+        onClose={deleteModal.close}
+        onConfirm={handleConfirmDelete}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        isDanger={true}
+      >
+        <div>
+          <p style={{ margin: 0, color: '#374151', lineHeight: 1.6 }}>
+            ¿Está seguro de que desea eliminar el equipo <strong>"{teamToDelete?.client}"</strong>?
+          </p>
+          <p style={{ margin: '12px 0 0 0', color: '#6b7280', fontSize: 13 }}>
+            Esta acción no se puede deshacer. Se eliminarán todos los miembros y evaluaciones asociadas.
+          </p>
+        </div>
+      </Modal>
     </div>
   )
 }
