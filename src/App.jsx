@@ -24,6 +24,7 @@ function ScrollToTop() {
 // ---- Componente de Card de Usuarios Conectados (Independiente) ----
 function OnlineUsersCard() {
   const { allUsers } = useApp()
+  const { user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const cardRef = useRef(null)
 
@@ -108,6 +109,7 @@ function OnlineUsersCard() {
                 <div className="user-info">
                   <div className="user-item-name">
                     {u.full_name || u.email?.split('@')[0]}
+                    {user?.id === u.id && ' (You)'}
                   </div>
                   <div className="user-item-email">{u.email}</div>
                   <div className="user-status">Active now</div>
@@ -197,6 +199,56 @@ function SubHeader() {
 
 // ---- renderiza la app completa SOLO si hay usuario ----
 function AppShell() {
+  const { user, userProfile } = useAuth()
+  const { markUserOnline, updateUserActivity } = useApp()
+
+  // Mark user as online when they log in
+  useEffect(() => {
+    if (user?.id) {
+      markUserOnline(user.id, user.email, userProfile?.full_name || user.email?.split('@')[0])
+    }
+  }, [user?.id])
+
+  // Update user activity periodically and on page interactions
+  useEffect(() => {
+    if (!user?.id) return
+
+    const updateActivity = () => {
+      updateUserActivity(user.id)
+    }
+
+    // Update activity every 30 seconds
+    const activityInterval = setInterval(updateActivity, 30000)
+
+    // Also update on user interactions
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart']
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity)
+    })
+
+    return () => {
+      clearInterval(activityInterval)
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity)
+      })
+    }
+  }, [user?.id, updateUserActivity])
+
+  // Mark user as offline when they leave/logout
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (user?.id) {
+        // Use sendBeacon to ensure it sends even as page is unloading
+        const data = new FormData()
+        data.append('user_id', user.id)
+        // Note: Actual offline marking happens in signOut method
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [user?.id])
+
   return (
     <div className="container-app">
       <ScrollToTop />

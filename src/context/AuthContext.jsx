@@ -70,6 +70,18 @@ export function AuthProvider({ children }) {
   }
 
   const signOut = async () => {
+    // Mark user offline before signing out
+    if (user?.id) {
+      try {
+        await supabase
+          .from('online_users')
+          .delete()
+          .eq('id', user.id)
+      } catch (error) {
+        console.error('Error marking user offline:', error)
+      }
+    }
+
     await supabase.auth.signOut()
     setUser(null)
   }

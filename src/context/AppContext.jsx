@@ -43,30 +43,25 @@ export function AppProvider({children}){
     checkIfAdmin();
   }, [user]);
 
-  // Cargar lista de todos los usuarios si es admin
+  // Cargar lista de usuarios conectados (online_users table)
   useEffect(() => {
-    if (!isAdminUser) {
-      setAllUsers([]);
-      return;
-    }
-
-    const loadAllUsers = async () => {
+    const loadOnlineUsers = async () => {
       try {
         const { data, error } = await supabase
-          .from('users')
+          .from('online_users')
           .select('id, email, full_name')
-          .order('email');
+          .order('full_name, email');
 
         if (error) throw error;
         setAllUsers(data || []);
       } catch (error) {
-        console.error('Error loading users:', error);
+        console.error('Error loading online users:', error);
         setAllUsers([]);
       }
     };
 
-    loadAllUsers();
-  }, [isAdminUser]);
+    loadOnlineUsers();
+  }, []);
 
   // Cargar teams de Supabase cuando el usuario está autenticado
   useEffect(()=> {
@@ -224,6 +219,55 @@ export function AppProvider({children}){
 
   const getCompetencies = (role) => competenciesByRole[role] || competenciesByRole['developer'];
 
+  // Mark user as online when they log in
+  const markUserOnline = async (userId, email, fullName) => {
+    try {
+      const { error } = await supabase
+        .from('online_users')
+        .upsert({
+          id: userId,
+          email: email,
+          full_name: fullName,
+          last_activity: new Date(),
+          updated_at: new Date()
+        }, {
+          onConflict: 'id'
+        });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error marking user online:', error);
+    }
+  };
+
+  // Update user's last activity
+  const updateUserActivity = async (userId) => {
+    try {
+      const { error } = await supabase
+        .from('online_users')
+        .update({ last_activity: new Date(), updated_at: new Date() })
+        .eq('id', userId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating user activity:', error);
+    }
+  };
+
+  // Mark user as offline when they log out
+  const markUserOffline = async (userId) => {
+    try {
+      const { error } = await supabase
+        .from('online_users')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error marking user offline:', error);
+    }
+  };
+
   return <AppContext.Provider value={{
     teams,
     addTeam,
@@ -235,6 +279,9 @@ export function AppProvider({children}){
     isAdminUser,
     selectedUserId,
     setSelectedUserId,
-    allUsers
+    allUsers,
+    markUserOnline,
+    updateUserActivity,
+    markUserOffline
   }}>{children}</AppContext.Provider>
 }
