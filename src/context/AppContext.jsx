@@ -281,7 +281,8 @@ export function AppProvider({children}){
       if (error) throw error;
 
       const newTeam = data[0];
-      setTeams(prev => [...prev, { ...newTeam, members: [] }]);
+      // Don't update state here - let Realtime subscription handle it
+      // This prevents duplication since Realtime also fires on INSERT
       return newTeam;
     } catch (error) {
       console.error('Error adding team:', error);
@@ -316,11 +317,8 @@ export function AppProvider({children}){
       }
 
       const newMember = data[0];
-      setTeams(prev => prev.map(t =>
-        t.id === teamId
-          ? {...t, members: [...(t.members || []), {...newMember, evaluations:{Q1:{},Q2:{},Q3:{},Q4:{}}, evidence:{Q1:{},Q2:{},Q3:{},Q4:{}}}]}
-          : t
-      ));
+      // Don't update state here - let Realtime subscription handle it
+      // This prevents duplication since Realtime also fires on INSERT
       return newMember;
     } catch (error) {
       console.error('Error adding member:', error);
@@ -338,10 +336,8 @@ export function AppProvider({children}){
 
       if (error) throw error;
 
-      setTeams(prev=> prev.map(t=> {
-        if(t.id!==teamId) return t;
-        return {...t, members: t.members.map(m=> m.id===memberId ? {...m, ...patch} : m)};
-      }))
+      // Don't update state here - let Realtime subscription handle it
+      // This prevents unnecessary state updates and potential conflicts
     } catch (error) {
       console.error('Error updating member:', error);
     }
@@ -371,10 +367,8 @@ export function AppProvider({children}){
 
       if (error) throw error;
 
-      setTeams(prev=> prev.map(t=> {
-        if(t.id!==teamId) return t;
-        return {...t, members: t.members.filter(m=> m.id!==memberId)};
-      }))
+      // Don't update state here - let Realtime subscription handle it
+      // This prevents race conditions and duplicate deletions
     } catch (error) {
       console.error('Error deleting member:', error);
     }
