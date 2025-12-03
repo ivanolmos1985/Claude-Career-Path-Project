@@ -85,50 +85,84 @@ export default function RegisterPage() {
         {success ? (
           <div style={{
             textAlign: "center",
-            background: "#d1fae5",
+            background: "linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%)",
             border: "2px solid #10b981",
-            borderRadius: 8,
-            padding: 24,
+            borderRadius: 12,
+            padding: 32,
             margin: "0 -40px -40px -40px"
           }}>
-            <p style={{
-              fontSize: 20,
-              fontWeight: "bold",
-              color: "#047857",
-              margin: "0 0 12px 0"
+            <div style={{
+              fontSize: 56,
+              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "rgba(16, 185, 129, 0.1)",
+              borderRadius: "50%",
+              width: 80,
+              height: 80,
+              margin: "0 auto 16px auto"
             }}>
-              ✅ ¡Cuenta creada exitosamente!
+              ✅
+            </div>
+
+            <p style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#047857",
+              margin: "0 0 8px 0"
+            }}>
+              ¡Cuenta creada exitosamente!
             </p>
 
             <p style={{
               fontSize: 14,
-              color: "#047857",
-              margin: "0 0 20px 0",
-              lineHeight: 1.5
+              color: "#059669",
+              margin: "0 0 24px 0",
+              lineHeight: 1.6
             }}>
               Se envió un correo de confirmación a tu bandeja de entrada.
               <br />
-              Verifica tu email para confirmar la cuenta.
+              <strong>Verifica tu email para confirmar la cuenta</strong> y poder acceder al sistema.
             </p>
+
+            <div style={{
+              background: "rgba(255, 255, 255, 0.8)",
+              borderRadius: 8,
+              padding: 12,
+              marginBottom: 20,
+              fontSize: 13,
+              color: "#047857",
+              border: "1px solid rgba(16, 185, 129, 0.2)"
+            }}>
+              💡 <strong>Tip:</strong> Si no ves el email, revisa la carpeta de Spam
+            </div>
 
             <Link to="/login" style={{ textDecoration: "none" }}>
               <button
                 style={{
-                  padding: 12,
+                  padding: 14,
                   width: "100%",
                   border: "none",
-                  background: "#10b981",
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                   color: "white",
                   borderRadius: 8,
                   cursor: "pointer",
                   fontSize: 15,
-                  fontWeight: 600,
-                  transition: "background 0.3s ease"
+                  fontWeight: 700,
+                  transition: "all 0.3s ease",
+                  boxShadow: "0 4px 12px rgba(16, 185, 129, 0.3)"
                 }}
-                onMouseEnter={(e) => e.target.style.background = "#059669"}
-                onMouseLeave={(e) => e.target.style.background = "#10b981"}
+                onMouseEnter={(e) => {
+                  e.target.style.transform = "translateY(-2px)";
+                  e.target.style.boxShadow = "0 6px 16px rgba(16, 185, 129, 0.4)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 4px 12px rgba(16, 185, 129, 0.3)";
+                }}
               >
-                Ir a Iniciar Sesión
+                ✨ Ir a Iniciar Sesión
               </button>
             </Link>
           </div>
