@@ -10,7 +10,6 @@ import EvaluationPage from './pages/EvaluationPage'
 import ProgressPage from './pages/ProgressPage'
 import DecisionPage from './pages/DecisionPage'
 import LoginPage from './pages/Login'
-import RegisterPage from './pages/Register'
 
 // Scroll to top cuando cambia la ruta
 function ScrollToTop() {
@@ -284,13 +283,12 @@ function AppController() {
     return <div style={{ padding: 40, color: 'white' }}>Cargando...</div>
   }
 
-  // sin usuario → SOLO muestra login y register
+  // sin usuario → SOLO muestra login
   if (!user) {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        {/* si intenta entrar a otra ruta → redirige a login */}
+        {/* todas las demás rutas → redirige a login */}
         <Route path="*" element={<LoginPage />} />
       </Routes>
     )
