@@ -21,100 +21,111 @@ function ScrollToTop() {
   return null
 }
 
-// ---- Componente de Usuario Dropdown ----
-function UserDropdown() {
+// ---- Componente de Header con Navegación Integrada ----
+function Header() {
   const { user, signOut } = useAuth()
   const { isAdminUser, allUsers } = useApp()
-  const [isOpen, setIsOpen] = useState(false)
-
-  const handleSignOut = async () => {
-    await signOut()
-  }
-
-  const dropdownRef = React.useRef(null)
-
-  // Cerrar dropdown al hacer click fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
-  return (
-    <div className="user-dropdown-container" ref={dropdownRef}>
-      <button
-        className="user-dropdown-btn"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        👤 {user?.email?.split('@')[0] || 'Usuario'}
-      </button>
-
-      <div className={`user-dropdown-menu ${isOpen ? 'active' : ''}`}>
-        <div className="user-dropdown-header">
-          <div className="user-email">{user?.email}</div>
-          <div className="user-role">Usuario</div>
-          {isAdminUser && (
-            <span className="admin-badge">Admin</span>
-          )}
-        </div>
-
-        {isAdminUser && allUsers.length > 0 && (
-          <>
-            <div style={{ padding: '8px 16px', fontSize: '12px', fontWeight: '600', color: '#6b7280', marginTop: '8px' }}>
-              USUARIOS CONECTADOS
-            </div>
-            <div className="user-list">
-              {allUsers.map(u => (
-                <div key={u.id} className="user-list-item">
-                  📧 {u.email}
-                </div>
-              ))}
-            </div>
-            <div className="dropdown-divider"></div>
-          </>
-        )}
-
-        <button
-          className="dropdown-logout"
-          onClick={handleSignOut}
-        >
-          🚪 Cerrar sesión
-        </button>
-      </div>
-    </div>
-  )
-}
-
-// ---- Componente de Tabs de Navegación ----
-function SubHeader() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
 
   const tabs = [
-    { label: '🏢 Equipos', path: '/teams' },
-    { label: '👥 Miembros', path: '/members' },
-    { label: '📊 Evaluación', path: '/evaluation' },
-    { label: '📈 Progreso', path: '/progress' },
-    { label: '✅ Decisión', path: '/decision' }
+    { label: 'Dashboard', path: '/teams' },
+    { label: 'Manager Summary', path: '/members' },
+    { label: 'Accounts', path: '/evaluation' },
+    { label: 'Analytics', path: '/progress' },
+    { label: 'Year Comparison', path: '/decision' }
   ]
 
+  // Generar avatares para usuarios conectados (primeras letras)
+  const getAvatarColor = (index) => {
+    const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
+    return colors[index % colors.length]
+  }
+
+  const getInitials = (email) => {
+    return email?.split('@')[0]?.substring(0, 2).toUpperCase() || 'U'
+  }
+
   return (
-    <div className="subheader">
-      <div className="subheader-tabs">
+    <div className="header-new">
+      {/* SECCIÓN IZQUIERDA: Logo + Título */}
+      <div className="header-left">
+        <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 32 }} />
+        <div>
+          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#003366' }}>
+            Delivery Management Dashboard
+          </h1>
+          <p style={{ margin: 0, fontSize: 12, color: '#6b7280' }}>
+            Track account health and team performance
+          </p>
+        </div>
+      </div>
+
+      {/* SECCIÓN CENTRAL: Tabs de Navegación */}
+      <div className="header-tabs">
         {tabs.map(tab => (
           <button
             key={tab.path}
-            className={`tab ${pathname === tab.path ? 'active' : ''}`}
+            className={`header-tab ${pathname === tab.path ? 'active' : ''}`}
             onClick={() => navigate(tab.path)}
           >
             {tab.label}
           </button>
         ))}
+      </div>
+
+      {/* SECCIÓN DERECHA: Usuarios conectados + User Info + Logout */}
+      <div className="header-right">
+        {/* Usuarios conectados (avatares) */}
+        <div className="online-users">
+          <div className="avatar-group">
+            {allUsers.slice(0, 3).map((u, idx) => (
+              <div
+                key={u.id}
+                className="avatar"
+                style={{
+                  backgroundColor: getAvatarColor(idx),
+                  marginLeft: idx > 0 ? '-8px' : 0,
+                  zIndex: 3 - idx
+                }}
+                title={u.email}
+              >
+                {getInitials(u.email)}
+              </div>
+            ))}
+            {allUsers.length > 3 && (
+              <div
+                className="avatar"
+                style={{
+                  backgroundColor: '#d1d5db',
+                  marginLeft: '-8px',
+                  zIndex: 0
+                }}
+              >
+                +{allUsers.length - 3}
+              </div>
+            )}
+          </div>
+          <span className="online-count">{allUsers.length} Online</span>
+        </div>
+
+        {/* Información del usuario actual */}
+        <div className="user-current">
+          <div className="user-name">{user?.email?.split('@')[0]}</div>
+          <div className="user-email">{user?.email}</div>
+          {isAdminUser && (
+            <span className="admin-badge-small">ADMIN</span>
+          )}
+        </div>
+
+        {/* Botón Logout */}
+        <button
+          className="btn-logout"
+          onClick={signOut}
+          title="Logout"
+        >
+          ➜ Logout
+        </button>
       </div>
     </div>
   )
@@ -123,21 +134,11 @@ function SubHeader() {
 // ---- renderiza la app completa SOLO si hay usuario ----
 function AppShell() {
   return (
-    <div className="container">
+    <div className="container-new">
       <ScrollToTop />
 
-      {/* HEADER */}
-      <div className="header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 40 }} />
-          <h2 style={{ margin: 0, fontSize: 20 }}>Career Path System</h2>
-        </div>
-
-        <UserDropdown />
-      </div>
-
-      {/* SUBHEADER CON TABS */}
-      <SubHeader />
+      {/* HEADER TODO EN UNO */}
+      <Header />
 
       {/* CONTENT */}
       <div className="content">
