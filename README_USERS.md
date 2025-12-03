@@ -38,6 +38,22 @@ Este proyecto tiene documentación sobre cómo registrar y gestionar usuarios:
 
 ---
 
+### 3. **MIGRATE_EXISTING_USERS.md** 📊 (MIGRACIÓN)
+**Para:** Si ya tenías usuarios antes de crear la tabla
+
+📄 Guía de migración con:
+- Script para copiar usuarios existentes
+- Cómo verificar que funcionó
+- Troubleshooting de migración
+- Qué pasa después de migrar
+
+**Tiempo:** ~2 minutos
+**Nivel:** Para no-programadores
+
+**👉 Lee esto si tenías usuarios ANTES de crear la tabla**
+
+---
+
 ## 🎯 ¿Qué Hace Esta Tabla?
 
 ### Problema Original
@@ -95,6 +111,14 @@ Usuario aparece en Table Editor
 3. Lee `USERS_TABLE_SETUP.md` (PASO 2)
 4. Copia y ejecuta SQL del trigger
 5. Verifica siguiendo pasos de verificación
+6. ¡Listo!
+
+### Opción C: Migrar Usuarios Existentes (2 minutos)
+1. Primero crea la tabla (Opción A o B)
+2. Abre `MIGRATE_EXISTING_USERS.md`
+3. Copia el script de migración
+4. Ejecuta en Supabase
+5. Verifica que aparecen tus usuarios
 6. ¡Listo!
 
 ---
@@ -156,6 +180,9 @@ A: Sí, pero los cambios se sobrescriben si Supabase Auth se actualiza.
 **P: ¿Es obligatorio crear esta tabla?**
 A: No, pero es muy recomendable si quieres acceder a datos de usuario desde la app.
 
+**P: ¿Qué hago si ya tenía usuarios antes de crear la tabla?**
+A: Lee `MIGRATE_EXISTING_USERS.md`. Tiene un script para copiar tus usuarios existentes.
+
 ---
 
 ## 🆘 Troubleshooting
@@ -199,9 +226,12 @@ Si algo no funciona:
 - [x] Documentación creada
 - [x] Scripts SQL listos
 - [x] Ejemplos incluidos
+- [x] Migración de usuarios existentes soportada
 - [ ] Tabla creada en tu Supabase (tú lo haces)
 
-**Próximo paso:** Abre `QUICK_START_USERS.md` y sigue los pasos.
+**Próximo paso:**
+- Si es tu PRIMERA VEZ: Abre `QUICK_START_USERS.md`
+- Si YA TENÍAS USUARIOS: Abre `MIGRATE_EXISTING_USERS.md`
 
 ---
 
