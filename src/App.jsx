@@ -21,22 +21,12 @@ function ScrollToTop() {
   return null
 }
 
-// ---- Componente de Header con Navegación Integrada ----
+// ---- Header Solo con Logo + Título + Card de Usuarios ----
 function Header() {
   const { user, signOut } = useAuth()
   const { isAdminUser, allUsers } = useApp()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
 
-  const tabs = [
-    { label: 'Dashboard', path: '/teams' },
-    { label: 'Manager Summary', path: '/members' },
-    { label: 'Accounts', path: '/evaluation' },
-    { label: 'Analytics', path: '/progress' },
-    { label: 'Year Comparison', path: '/decision' }
-  ]
-
-  // Generar avatares para usuarios conectados (primeras letras)
+  // Generar avatares para usuarios conectados
   const getAvatarColor = (index) => {
     const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b']
     return colors[index % colors.length]
@@ -47,42 +37,29 @@ function Header() {
   }
 
   return (
-    <div className="header-new">
-      {/* SECCIÓN IZQUIERDA: Logo + Título */}
-      <div className="header-left">
-        <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 32 }} />
+    <div className="header-main">
+      {/* SECCIÓN IZQUIERDA: Logo + Título + Descripción */}
+      <div className="header-branding">
+        <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 40 }} />
         <div>
-          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: '#003366' }}>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#003366' }}>
             Delivery Management Dashboard
           </h1>
-          <p style={{ margin: 0, fontSize: 12, color: '#6b7280' }}>
+          <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#6b7280' }}>
             Track account health and team performance
           </p>
         </div>
       </div>
 
-      {/* SECCIÓN CENTRAL: Tabs de Navegación */}
-      <div className="header-tabs">
-        {tabs.map(tab => (
-          <button
-            key={tab.path}
-            className={`header-tab ${pathname === tab.path ? 'active' : ''}`}
-            onClick={() => navigate(tab.path)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* SECCIÓN DERECHA: Usuarios conectados + User Info + Logout */}
-      <div className="header-right">
-        {/* Usuarios conectados (avatares) */}
-        <div className="online-users">
+      {/* CARD INDEPENDIENTE: Usuarios + Info + Logout */}
+      <div className="user-info-card">
+        {/* Avatares de usuarios conectados */}
+        <div className="avatars-section">
           <div className="avatar-group">
             {allUsers.slice(0, 3).map((u, idx) => (
               <div
                 key={u.id}
-                className="avatar"
+                className="avatar-small"
                 style={{
                   backgroundColor: getAvatarColor(idx),
                   marginLeft: idx > 0 ? '-8px' : 0,
@@ -95,7 +72,7 @@ function Header() {
             ))}
             {allUsers.length > 3 && (
               <div
-                className="avatar"
+                className="avatar-small"
                 style={{
                   backgroundColor: '#d1d5db',
                   marginLeft: '-8px',
@@ -106,23 +83,28 @@ function Header() {
               </div>
             )}
           </div>
-          <span className="online-count">{allUsers.length} Online</span>
+          <span className="online-badge">{allUsers.length} Online</span>
         </div>
 
         {/* Información del usuario actual */}
-        <div className="user-current">
-          <div className="user-name">{user?.email?.split('@')[0]}</div>
-          <div className="user-email">{user?.email}</div>
+        <div className="user-profile">
+          <div className="user-detail">
+            <div className="user-label">Nombre</div>
+            <div className="user-value">{user?.email?.split('@')[0]}</div>
+          </div>
+          <div className="user-detail">
+            <div className="user-label">Email</div>
+            <div className="user-value-email">{user?.email}</div>
+          </div>
           {isAdminUser && (
-            <span className="admin-badge-small">ADMIN</span>
+            <div className="admin-indicator">ADMIN</div>
           )}
         </div>
 
         {/* Botón Logout */}
         <button
-          className="btn-logout"
+          className="logout-btn"
           onClick={signOut}
-          title="Logout"
         >
           ➜ Logout
         </button>
@@ -131,14 +113,45 @@ function Header() {
   )
 }
 
+// ---- Subheader con Tabs de Navegación ----
+function SubHeader() {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  const tabs = [
+    { label: 'Equipos', path: '/teams' },
+    { label: 'Miembros', path: '/members' },
+    { label: 'Evaluación', path: '/evaluation' },
+    { label: 'Progreso', path: '/progress' },
+    { label: 'Decisión', path: '/decision' }
+  ]
+
+  return (
+    <div className="subheader-tabs">
+      {tabs.map(tab => (
+        <button
+          key={tab.path}
+          className={`subheader-tab ${pathname === tab.path ? 'active' : ''}`}
+          onClick={() => navigate(tab.path)}
+        >
+          {tab.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 // ---- renderiza la app completa SOLO si hay usuario ----
 function AppShell() {
   return (
-    <div className="container-new">
+    <div className="container-app">
       <ScrollToTop />
 
-      {/* HEADER TODO EN UNO */}
+      {/* HEADER PRINCIPAL */}
       <Header />
+
+      {/* SUBHEADER CON TABS */}
+      <SubHeader />
 
       {/* CONTENT */}
       <div className="content">
