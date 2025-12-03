@@ -483,8 +483,8 @@ input:focus, select:focus, textarea:focus {
 .user-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 6px 12px;
   border-bottom: 1px solid #f0f0f0;
   transition: background 0.2s ease;
 }
@@ -513,7 +513,7 @@ input:focus, select:focus, textarea:focus {
 .user-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 0px;
   flex: 1;
   min-width: 0;
   align-items: flex-start;
