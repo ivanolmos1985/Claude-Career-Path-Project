@@ -133,10 +133,10 @@ function Header() {
         <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 40 }} />
         <div>
           <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#003366' }}>
-            Delivery Management Dashboard
+            Career Path System
           </h1>
           <p style={{ margin: '4px 0 0 0', fontSize: 13, color: '#6b7280' }}>
-            Track account health and team performance
+            Managing Skills, Performance, and Career Progression
           </p>
         </div>
       </div>
