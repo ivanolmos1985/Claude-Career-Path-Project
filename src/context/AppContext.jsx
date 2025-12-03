@@ -220,14 +220,23 @@ export function AppProvider({children}){
   const getCompetencies = (role) => competenciesByRole[role] || competenciesByRole['developer'];
 
   // Mark user as online when they log in
-  const markUserOnline = async (userId, email, fullName) => {
+  const markUserOnline = async (userId, email) => {
     try {
+      // Fetch user data from users table to get full_name
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id, email, full_name')
+        .eq('id', userId)
+        .single();
+
+      if (userError) throw userError;
+
       const { error } = await supabase
         .from('online_users')
         .upsert({
           id: userId,
-          email: email,
-          full_name: fullName,
+          email: userData.email,
+          full_name: userData.full_name,
           last_activity: new Date(),
           updated_at: new Date()
         }, {

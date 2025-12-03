@@ -199,13 +199,13 @@ function SubHeader() {
 
 // ---- renderiza la app completa SOLO si hay usuario ----
 function AppShell() {
-  const { user, userProfile } = useAuth()
+  const { user } = useAuth()
   const { markUserOnline, updateUserActivity } = useApp()
 
   // Mark user as online when they log in
   useEffect(() => {
     if (user?.id) {
-      markUserOnline(user.id, user.email, userProfile?.full_name || user.email?.split('@')[0])
+      markUserOnline(user.id, user.email)
     }
   }, [user?.id])
 
