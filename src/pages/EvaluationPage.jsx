@@ -3,6 +3,8 @@ import { useApp } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '../hooks/useQuery'
 import { createClient } from '@supabase/supabase-js'
+import Modal from '../components/Modal'
+import useModal from '../hooks/useModal'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -18,6 +20,7 @@ export default function EvaluationPage(){
   const member = team && team.members.find(m=>m.id===memberId)
   const [quarter,setQuarter]=useState('Q1')
   const navigate = useNavigate()
+  const successModal = useModal()
 
   useEffect(()=>{ if(!team || !member) navigate('/teams') },[team,member,navigate])
 
@@ -75,8 +78,12 @@ export default function EvaluationPage(){
     }
   }
 
-  const saveAndBack = () => {
-    alert('Evaluación guardada')
+  const handleSaveSuccess = () => {
+    successModal.open()
+  }
+
+  const handleConfirmSuccess = () => {
+    successModal.close()
     navigate('/progress?team='+team.id+'&member='+member.id)
   }
 
@@ -175,7 +182,7 @@ export default function EvaluationPage(){
       <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
         <button
           className="btn btn-success"
-          onClick={saveAndBack}
+          onClick={handleSaveSuccess}
           style={{
             background: '#10b981',
             color: 'white',
@@ -187,6 +194,22 @@ export default function EvaluationPage(){
           💾 Guardar y Continuar
         </button>
       </div>
+
+      {/* Modal Evaluación Guardada */}
+      <Modal
+        isOpen={successModal.isOpen}
+        title="✅ Evaluación Guardada"
+        onClose={handleConfirmSuccess}
+        onConfirm={handleConfirmSuccess}
+        confirmText="Continuar"
+        cancelText=""
+      >
+        <div>
+          <p style={{ margin: 0, color: '#374151', lineHeight: 1.6 }}>
+            La evaluación de competencias ha sido guardada exitosamente.
+          </p>
+        </div>
+      </Modal>
     </div>
   )
 }
