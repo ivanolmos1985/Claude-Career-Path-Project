@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppProvider, useApp } from './context/AppContext'
@@ -21,10 +21,11 @@ function ScrollToTop() {
   return null
 }
 
-// ---- Header Solo con Logo + Título + Card de Usuarios ----
-function Header() {
-  const { user, signOut } = useAuth()
-  const { isAdminUser, allUsers } = useApp()
+// ---- Componente de Card de Usuarios Conectados (Independiente) ----
+function OnlineUsersCard() {
+  const { allUsers } = useApp()
+  const [isOpen, setIsOpen] = useState(false)
+  const cardRef = useRef(null)
 
   // Generar avatares para usuarios conectados
   const getAvatarColor = (index) => {
@@ -35,6 +36,92 @@ function Header() {
   const getInitials = (email) => {
     return email?.split('@')[0]?.substring(0, 2).toUpperCase() || 'U'
   }
+
+  // Cerrar dropdown al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (cardRef.current && !cardRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div className="online-users-card" ref={cardRef}>
+      {/* CARD CLICKEABLE con Avatares */}
+      <button
+        className="users-card-button"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="avatar-group">
+          {allUsers.slice(0, 3).map((u, idx) => (
+            <div
+              key={u.id}
+              className="avatar-small"
+              style={{
+                backgroundColor: getAvatarColor(idx),
+                marginLeft: idx > 0 ? '-8px' : 0,
+                zIndex: 3 - idx
+              }}
+              title={u.email}
+            >
+              {getInitials(u.email)}
+            </div>
+          ))}
+          {allUsers.length > 3 && (
+            <div
+              className="avatar-small"
+              style={{
+                backgroundColor: '#d1d5db',
+                marginLeft: '-8px',
+                zIndex: 0
+              }}
+            >
+              +{allUsers.length - 3}
+            </div>
+          )}
+        </div>
+        <span className="online-count">{allUsers.length} Online</span>
+      </button>
+
+      {/* DROPDOWN con Lista de Usuarios */}
+      {isOpen && (
+        <div className="users-dropdown">
+          <div className="dropdown-header">
+            <span className="dropdown-title">Active Users ({allUsers.length})</span>
+          </div>
+          <div className="users-list">
+            {allUsers.map((u) => (
+              <div key={u.id} className="user-item">
+                <div
+                  className="user-avatar"
+                  style={{ backgroundColor: getAvatarColor(allUsers.indexOf(u)) }}
+                >
+                  {getInitials(u.email)}
+                </div>
+                <div className="user-info">
+                  <div className="user-item-name">
+                    {u.email?.split('@')[0]}
+                  </div>
+                  <div className="user-item-email">{u.email}</div>
+                  <div className="user-status">Active now</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---- Header Solo con Logo + Título ----
+function Header() {
+  const { user, signOut } = useAuth()
+  const { isAdminUser } = useApp()
 
   return (
     <div className="header-main">
@@ -51,41 +138,11 @@ function Header() {
         </div>
       </div>
 
-      {/* CARD INDEPENDIENTE: Usuarios + Info + Logout */}
-      <div className="user-info-card">
-        {/* Avatares de usuarios conectados */}
-        <div className="avatars-section">
-          <div className="avatar-group">
-            {allUsers.slice(0, 3).map((u, idx) => (
-              <div
-                key={u.id}
-                className="avatar-small"
-                style={{
-                  backgroundColor: getAvatarColor(idx),
-                  marginLeft: idx > 0 ? '-8px' : 0,
-                  zIndex: 3 - idx
-                }}
-                title={u.email}
-              >
-                {getInitials(u.email)}
-              </div>
-            ))}
-            {allUsers.length > 3 && (
-              <div
-                className="avatar-small"
-                style={{
-                  backgroundColor: '#d1d5db',
-                  marginLeft: '-8px',
-                  zIndex: 0
-                }}
-              >
-                +{allUsers.length - 3}
-              </div>
-            )}
-          </div>
-          <span className="online-badge">{allUsers.length} Online</span>
-        </div>
+      {/* SECCIÓN CENTRAL: Card de Usuarios (Independiente) */}
+      <OnlineUsersCard />
 
+      {/* SECCIÓN DERECHA: Info Usuario + Logout */}
+      <div className="user-info-section">
         {/* Información del usuario actual */}
         <div className="user-profile">
           <div className="user-detail">
