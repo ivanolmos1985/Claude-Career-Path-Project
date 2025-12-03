@@ -15,6 +15,58 @@ export function AppProvider({children}){
   const { user } = useAuth();
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAdminUser, setIsAdminUser] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [allUsers, setAllUsers] = useState([]);
+
+  // Verificar si el usuario actual es admin
+  useEffect(() => {
+    if (!user) {
+      setIsAdminUser(false);
+      return;
+    }
+
+    const checkIfAdmin = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        setIsAdminUser(!error && data !== null);
+      } catch (error) {
+        setIsAdminUser(false);
+      }
+    };
+
+    checkIfAdmin();
+  }, [user]);
+
+  // Cargar lista de todos los usuarios si es admin
+  useEffect(() => {
+    if (!isAdminUser) {
+      setAllUsers([]);
+      return;
+    }
+
+    const loadAllUsers = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, email, full_name')
+          .order('email');
+
+        if (error) throw error;
+        setAllUsers(data || []);
+      } catch (error) {
+        console.error('Error loading users:', error);
+        setAllUsers([]);
+      }
+    };
+
+    loadAllUsers();
+  }, [isAdminUser]);
 
   // Cargar teams de Supabase cuando el usuario está autenticado
   useEffect(()=> {
@@ -27,10 +79,14 @@ export function AppProvider({children}){
     const loadTeams = async () => {
       try {
         setLoading(true);
+
+        // Si es admin y tiene usuario seleccionado, traer datos de ese usuario
+        const userIdToLoad = isAdminUser && selectedUserId ? selectedUserId : user.id;
+
         const { data, error } = await supabase
           .from('teams')
           .select('*, members(*)')
-          .eq('user_id', user.id);
+          .eq('user_id', userIdToLoad);
 
         if (error) throw error;
 
@@ -54,7 +110,7 @@ export function AppProvider({children}){
     };
 
     loadTeams();
-  }, [user]);
+  }, [user, isAdminUser, selectedUserId]);
 
   const addTeam = async (team) => {
     if (!user) return;
@@ -168,5 +224,17 @@ export function AppProvider({children}){
 
   const getCompetencies = (role) => competenciesByRole[role] || competenciesByRole['developer'];
 
-  return <AppContext.Provider value={{ teams, addTeam, addMember, updateMember, deleteTeam, deleteMember, getCompetencies }}>{children}</AppContext.Provider>
+  return <AppContext.Provider value={{
+    teams,
+    addTeam,
+    addMember,
+    updateMember,
+    deleteTeam,
+    deleteMember,
+    getCompetencies,
+    isAdminUser,
+    selectedUserId,
+    setSelectedUserId,
+    allUsers
+  }}>{children}</AppContext.Provider>
 }

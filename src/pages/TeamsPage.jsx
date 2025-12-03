@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 
 export default function TeamsPage(){
-  const { teams, addTeam, deleteTeam } = useApp()
+  const { teams, addTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsers } = useApp()
   const navigate = useNavigate()
   const [client, setClient] = useState('')
   const [desc, setDesc] = useState('')
@@ -17,6 +17,27 @@ export default function TeamsPage(){
   return (
     <div>
       <h3>Gestión de Equipos</h3>
+
+      {isAdminUser && (
+        <div className="card" style={{marginTop:12, background:'#f0f8ff', borderLeft:'4px solid #007bff'}}>
+          <div style={{marginBottom:8}}>
+            <label style={{fontWeight:600}}>👤 Admin - Selecciona Usuario:</label>
+          </div>
+          <select
+            value={selectedUserId || ''}
+            onChange={(e) => setSelectedUserId(e.target.value || null)}
+            style={{width:'100%', padding:'8px', fontSize:'14px'}}
+          >
+            <option value="">Ver mis propios datos</option>
+            {allUsers.map(u => (
+              <option key={u.id} value={u.id}>
+                {u.full_name || u.email}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       <div className="card" style={{marginTop:12}}>
         <div className="form-row">
           <input placeholder="Cliente/Proyecto" value={client} onChange={e=>setClient(e.target.value)} />
