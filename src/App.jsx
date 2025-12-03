@@ -56,33 +56,36 @@ function OnlineUsersCard() {
         className="users-card-button"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="avatar-group">
-          {allUsers.slice(0, 3).map((u, idx) => (
-            <div
-              key={u.id}
-              className="avatar-small"
-              style={{
-                backgroundColor: getAvatarColor(idx),
-                marginLeft: idx > 0 ? '-8px' : 0,
-                zIndex: 3 - idx
-              }}
-              title={u.email}
-            >
-              {getInitials(u.email)}
-            </div>
-          ))}
-          {allUsers.length > 3 && (
-            <div
-              className="avatar-small"
-              style={{
-                backgroundColor: '#d1d5db',
-                marginLeft: '-8px',
-                zIndex: 0
-              }}
-            >
-              +{allUsers.length - 3}
-            </div>
-          )}
+        <div className="users-button-content">
+          <span className="users-icon">👥</span>
+          <div className="avatar-group">
+            {allUsers.slice(0, 3).map((u, idx) => (
+              <div
+                key={u.id}
+                className="avatar-small"
+                style={{
+                  backgroundColor: getAvatarColor(idx),
+                  marginLeft: idx > 0 ? '-8px' : 0,
+                  zIndex: 3 - idx
+                }}
+                title={u.email}
+              >
+                {getInitials(u.email)}
+              </div>
+            ))}
+            {allUsers.length > 3 && (
+              <div
+                className="avatar-small"
+                style={{
+                  backgroundColor: '#d1d5db',
+                  marginLeft: '-8px',
+                  zIndex: 0
+                }}
+              >
+                +{allUsers.length - 3}
+              </div>
+            )}
+          </div>
         </div>
         <span className="online-count">{allUsers.length} Online</span>
       </button>
@@ -91,7 +94,7 @@ function OnlineUsersCard() {
       {isOpen && (
         <div className="users-dropdown">
           <div className="dropdown-header">
-            <span className="dropdown-title">Active Users ({allUsers.length})</span>
+            <span className="dropdown-title">👥 Active Users ({allUsers.length})</span>
           </div>
           <div className="users-list">
             {allUsers.map((u) => (
