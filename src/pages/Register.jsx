@@ -50,7 +50,7 @@ export default function RegisterPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "#0a2540",
+        background: "linear-gradient(135deg, #0a2540 0%, #1a3a52 50%, #0f2a3f 100%)",
         padding: 20
       }}
     >
@@ -58,39 +58,53 @@ export default function RegisterPage() {
         onSubmit={submit}
         style={{
           background: "white",
-          padding: 30,
+          padding: 40,
           borderRadius: 14,
           display: "flex",
           flexDirection: "column",
           width: "100%",
-          maxWidth: 360,
-          gap: 12
+          maxWidth: 400,
+          gap: 16,
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)"
         }}
       >
-        <h2 style={{ margin: 0, textAlign: "center" }}>Crear Cuenta</h2>
+        <div style={{ textAlign: "center", marginBottom: 12 }}>
+          <img
+            src="/arkus-logo.webp"
+            alt="Arkusnexus"
+            style={{ height: 50, marginBottom: 16 }}
+          />
+          <h2 style={{ margin: "0 0 8px 0", fontSize: 24, fontWeight: 700, color: "#003366" }}>
+            Delivery Manager Dashboard
+          </h2>
+          <p style={{ margin: 0, fontSize: 14, color: "#6b7280" }}>
+            Create your account
+          </p>
+        </div>
 
         {success ? (
           <div style={{
             textAlign: "center",
-            background: "#d4edda",
-            border: "2px solid #28a745",
+            background: "#d1fae5",
+            border: "2px solid #10b981",
             borderRadius: 8,
-            padding: 20,
-            margin: "0 -30px -30px -30px"
+            padding: 24,
+            margin: "0 -40px -40px -40px"
           }}>
             <p style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: "bold",
-              color: "#155724",
-              margin: "0 0 10px 0"
+              color: "#047857",
+              margin: "0 0 12px 0"
             }}>
               ✅ ¡Cuenta creada exitosamente!
             </p>
 
             <p style={{
               fontSize: 14,
-              color: "#155724",
-              margin: "0 0 15px 0"
+              color: "#047857",
+              margin: "0 0 20px 0",
+              lineHeight: 1.5
             }}>
               Se envió un correo de confirmación a tu bandeja de entrada.
               <br />
@@ -103,13 +117,16 @@ export default function RegisterPage() {
                   padding: 12,
                   width: "100%",
                   border: "none",
-                  background: "#28a745",
+                  background: "#10b981",
                   color: "white",
                   borderRadius: 8,
                   cursor: "pointer",
-                  fontSize: 16,
-                  fontWeight: "bold"
+                  fontSize: 15,
+                  fontWeight: 600,
+                  transition: "background 0.3s ease"
                 }}
+                onMouseEnter={(e) => e.target.style.background = "#059669"}
+                onMouseLeave={(e) => e.target.style.background = "#10b981"}
               >
                 Ir a Iniciar Sesión
               </button>
@@ -170,18 +187,24 @@ export default function RegisterPage() {
                 padding: 12,
                 borderRadius: 8,
                 border: "none",
-                background: "#28a745",
+                background: "#0066ff",
                 color: "white",
                 cursor: "pointer",
-                fontSize: 16
+                fontSize: 15,
+                fontWeight: 600,
+                transition: "background 0.3s ease"
               }}
+              onMouseEnter={(e) => e.target.style.background = "#0052cc"}
+              onMouseLeave={(e) => e.target.style.background = "#0066ff"}
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
 
-            <div style={{ textAlign: "center", marginTop: 12 }}>
+            <div style={{ textAlign: "center", marginTop: 12, fontSize: 14 }}>
               ¿Ya tienes cuenta?{" "}
-              <Link to="/login">Iniciar sesión</Link>
+              <Link to="/login" style={{ color: "#0066ff", textDecoration: "none", fontWeight: 600 }}>
+                Iniciar sesión
+              </Link>
             </div>
           </>
         )}

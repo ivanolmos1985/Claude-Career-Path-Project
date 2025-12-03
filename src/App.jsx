@@ -35,13 +35,21 @@ function AppShell() {
 
       {/* HEADER */}
       <div className="header">
-        <h2 style={{ margin: 0 }}>Career Path System</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <img src="/arkus-logo.webp" alt="Arkusnexus" style={{ height: 40 }} />
+          <h2 style={{ margin: 0, fontSize: 20 }}>Career Path System</h2>
+        </div>
 
-        <div style={{ display: 'flex', gap: 8 }}>
+        <div className="header-right">
+          <div className="user-info">
+            <span>👤 Admin User</span>
+          </div>
           <Link to="/teams">
             <button className="btn btn-primary">Equipos</button>
           </Link>
-          <button className="btn" onClick={handleSignOut} style={{ background: '#dc3545', color: 'white' }}>Cerrar sesión</button>
+          <button className="btn" onClick={handleSignOut} style={{ background: '#dc3545', color: 'white' }}>
+            Cerrar sesión
+          </button>
         </div>
       </div>
 
