@@ -82,34 +82,110 @@ export default function EvaluationPage(){
 
   return (
     <div>
-      <h3>Evaluando: {member.name}</h3>
-      <div style={{marginTop:10}} className="card">
-        <div style={{display:'flex',gap:8}}>
-          {['Q1','Q2','Q3','Q4'].map(q=>(
-            <button key={q} className={'btn'+(quarter===q?' btn-primary':'')} onClick={()=>setQuarter(q)}>{q}</button>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
+          📊 Evaluación de Competencias
+        </h1>
+        <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
+          Evaluando a: <span style={{ fontWeight: 600, color: '#0066ff' }}>{member.name}</span>
+        </p>
+      </div>
+
+      <div className="card" style={{ marginBottom: 20, padding: 16, background: '#eff6ff', borderLeft: '4px solid #0066ff' }}>
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 8, textTransform: 'uppercase' }}>
+            Selecciona Trimestre
+          </label>
+        </div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {['Q1', 'Q2', 'Q3', 'Q4'].map(q => (
+            <button
+              key={q}
+              className={'btn' + (quarter === q ? ' btn-primary' : '')}
+              onClick={() => setQuarter(q)}
+              style={{
+                background: quarter === q ? '#0066ff' : '#f3f4f6',
+                color: quarter === q ? 'white' : '#003366',
+                fontWeight: 600,
+                padding: '10px 18px',
+                flex: '1 1 auto',
+                minWidth: 80
+              }}
+            >
+              {q}
+            </button>
           ))}
         </div>
       </div>
 
-      <div style={{marginTop:12}}>
-        {comps.map(c=>(
-          <div key={c.id} className="card" style={{marginBottom:8}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-              <div><strong>{c.name}</strong><div style={{opacity:0.7,fontSize:13}}>Peso: {c.weight}%</div></div>
-              <div>
-                {[1,2,3,4,5].map(r=>(
-                  <button key={r} className={'btn'+((member.evaluations[quarter]||{})[c.id]===r ? ' btn-primary' : '')}
-                    onClick={()=>setRating(quarter,c.id,r)} style={{marginLeft:6}}>{r}</button>
+      <div>
+        {comps.map((c, idx) => (
+          <div key={c.id} className="card" style={{ marginBottom: 16, padding: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, gap: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: '#003366', marginBottom: 4 }}>
+                  {idx + 1}. {c.name}
+                </div>
+                <div style={{ opacity: 0.7, fontSize: 13, color: '#6b7280' }}>
+                  Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{c.weight}%</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                {[1, 2, 3, 4, 5].map(r => (
+                  <button
+                    key={r}
+                    className={'btn' + ((member.evaluations[quarter] || {})[c.id] === r ? ' btn-primary' : '')}
+                    onClick={() => setRating(quarter, c.id, r)}
+                    style={{
+                      padding: '8px 12px',
+                      background: (member.evaluations[quarter] || {})[c.id] === r ? '#0066ff' : '#f3f4f6',
+                      color: (member.evaluations[quarter] || {})[c.id] === r ? 'white' : '#003366',
+                      fontWeight: 600,
+                      minWidth: 40,
+                      textAlign: 'center'
+                    }}
+                  >
+                    {r}
+                  </button>
                 ))}
               </div>
             </div>
-            <textarea placeholder="Evidencia..." value={(member.evidence[quarter]||{})[c.id] || ''} onChange={e=>setEvidence(quarter,c.id,e.target.value)} style={{marginTop:8,width:'100%',padding:8,borderRadius:6,border:'1px solid #ccc',fontFamily:'inherit',fontSize:14,minHeight:80,resize:'vertical'}} />
+            <textarea
+              placeholder="Agregar evidencia para esta competencia..."
+              value={(member.evidence[quarter] || {})[c.id] || ''}
+              onChange={e => setEvidence(quarter, c.id, e.target.value)}
+              style={{
+                marginTop: 0,
+                width: '100%',
+                padding: 12,
+                borderRadius: 8,
+                border: '1px solid #e5e7eb',
+                borderColor: '#0066ff',
+                fontFamily: 'inherit',
+                fontSize: 14,
+                minHeight: 80,
+                resize: 'vertical',
+                fontColor: '#003366'
+              }}
+            />
           </div>
         ))}
       </div>
 
-      <div style={{marginTop:12}}>
-        <button className="btn btn-success" onClick={saveAndBack}>💾 Guardar Evaluación</button>
+      <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
+        <button
+          className="btn btn-success"
+          onClick={saveAndBack}
+          style={{
+            background: '#10b981',
+            color: 'white',
+            padding: '12px 24px',
+            fontSize: 15,
+            fontWeight: 600
+          }}
+        >
+          💾 Guardar y Continuar
+        </button>
       </div>
     </div>
   )
