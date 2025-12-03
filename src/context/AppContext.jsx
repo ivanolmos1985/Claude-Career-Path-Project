@@ -44,7 +44,7 @@ export function AppProvider({children}){
     checkIfAdmin();
   }, [user]);
 
-  // Cargar lista de usuarios conectados (online_users table) - Para avatar card
+  // Cargar lista de usuarios conectados (online_users table) - Para avatar card con Realtime
   useEffect(() => {
     const loadOnlineUsers = async () => {
       try {
@@ -62,9 +62,40 @@ export function AppProvider({children}){
     };
 
     loadOnlineUsers();
+
+    // Suscribirse a cambios en tiempo real en la tabla online_users
+    const onlineUsersSubscription = supabase
+      .channel('online_users:all')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'online_users'
+        },
+        (payload) => {
+          setAllUsers(prev => {
+            if (payload.eventType === 'INSERT') {
+              return [...prev, payload.new].sort((a, b) =>
+                (a.full_name || a.email).localeCompare(b.full_name || b.email)
+              );
+            } else if (payload.eventType === 'UPDATE') {
+              return prev.map(u => u.id === payload.new.id ? payload.new : u);
+            } else if (payload.eventType === 'DELETE') {
+              return prev.filter(u => u.id !== payload.old.id);
+            }
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(onlineUsersSubscription);
+    };
   }, []);
 
-  // Cargar lista de TODOS los usuarios (from users table) - Para selector admin
+  // Cargar lista de TODOS los usuarios (from users table) - Para selector admin con Realtime
   useEffect(() => {
     if (!isAdminUser) {
       setAllUsersForAdmin([]);
@@ -87,9 +118,40 @@ export function AppProvider({children}){
     };
 
     loadAllUsers();
+
+    // Suscribirse a cambios en tiempo real en la tabla users
+    const usersSubscription = supabase
+      .channel('users:all')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'users'
+        },
+        (payload) => {
+          setAllUsersForAdmin(prev => {
+            if (payload.eventType === 'INSERT') {
+              return [...prev, payload.new].sort((a, b) =>
+                (a.full_name || a.email).localeCompare(b.full_name || b.email)
+              );
+            } else if (payload.eventType === 'UPDATE') {
+              return prev.map(u => u.id === payload.new.id ? payload.new : u);
+            } else if (payload.eventType === 'DELETE') {
+              return prev.filter(u => u.id !== payload.old.id);
+            }
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(usersSubscription);
+    };
   }, [isAdminUser]);
 
-  // Cargar teams de Supabase cuando el usuario está autenticado
+  // Cargar teams de Supabase cuando el usuario está autenticado y configurar Realtime
   useEffect(()=> {
     if (!user) {
       setTeams([]);
@@ -131,6 +193,81 @@ export function AppProvider({children}){
     };
 
     loadTeams();
+
+    // Configurar Realtime subscriptions para cambios en tiempo real
+    const userIdToLoad = isAdminUser && selectedUserId ? selectedUserId : user.id;
+
+    // Suscribirse a cambios en la tabla teams
+    const teamsSubscription = supabase
+      .channel(`teams:user_id=eq.${userIdToLoad}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'teams',
+          filter: `user_id=eq.${userIdToLoad}`
+        },
+        (payload) => {
+          setTeams(prev => {
+            if (payload.eventType === 'INSERT') {
+              return [...prev, { ...payload.new, members: [] }];
+            } else if (payload.eventType === 'UPDATE') {
+              return prev.map(t => t.id === payload.new.id ? { ...t, ...payload.new } : t);
+            } else if (payload.eventType === 'DELETE') {
+              return prev.filter(t => t.id !== payload.old.id);
+            }
+            return prev;
+          });
+        }
+      )
+      .subscribe();
+
+    // Suscribirse a cambios en la tabla members
+    const membersSubscription = supabase
+      .channel('members:all')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'members'
+        },
+        (payload) => {
+          setTeams(prev => {
+            return prev.map(team => {
+              if (payload.eventType === 'INSERT' && payload.new.team_id === team.id) {
+                return {
+                  ...team,
+                  members: [...(team.members || []), {
+                    ...payload.new,
+                    evaluations: { Q1: {}, Q2: {}, Q3: {}, Q4: {} },
+                    evidence: { Q1: {}, Q2: {}, Q3: {}, Q4: {} }
+                  }]
+                };
+              } else if (payload.eventType === 'UPDATE') {
+                return {
+                  ...team,
+                  members: team.members.map(m => m.id === payload.new.id ? { ...m, ...payload.new } : m)
+                };
+              } else if (payload.eventType === 'DELETE') {
+                return {
+                  ...team,
+                  members: team.members.filter(m => m.id !== payload.old.id)
+                };
+              }
+              return team;
+            });
+          });
+        }
+      )
+      .subscribe();
+
+    // Limpiar subscriptions cuando se desmonta o cambian dependencias
+    return () => {
+      supabase.removeChannel(teamsSubscription);
+      supabase.removeChannel(membersSubscription);
+    };
   }, [user, isAdminUser, selectedUserId]);
 
   const addTeam = async (team) => {
