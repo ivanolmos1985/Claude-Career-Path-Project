@@ -37,18 +37,105 @@ export default function DecisionPage(){
     html2pdf().set(opt).from(htmlContent).save()
   }
 
+  const getStatusColor = () => {
+    if(status === 'PROMOCIÓN APROBADA') return { bg: '#d1fae5', border: '#10b981', color: '#047857' }
+    if(status === 'PROMOCIÓN PENDIENTE') return { bg: '#fef3c7', border: '#f59e0b', color: '#92400e' }
+    return { bg: '#fee2e2', border: '#dc3545', color: '#991b1b' }
+  }
+
+  const statusColors = getStatusColor()
+
   return (
     <div>
-      <h3>Decisión - {member.name}</h3>
-      <div style={{marginTop:12}} className="card">
-        <div>Score Q4: {q4}/{max}</div>
-        <div>Promedio anual (estimado): {Math.round(avg)}/{max}</div>
-        <div>Umbral requerido: {threshold}</div>
-        <div style={{marginTop:8,fontWeight:700}}>Estado: {status}</div>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
+          ✅ Decisión de Promoción
+        </h1>
+        <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
+          <span style={{ fontWeight: 600, color: '#0066ff' }}>{member.name}</span>
+        </p>
       </div>
 
-      <div style={{marginTop:12}}>
-        <button className="btn btn-primary" onClick={exportPDF}>📄 Exportar Reporte PDF</button>
+      <div style={{ marginBottom: 20, padding: 20, background: statusColors.bg, borderLeft: `4px solid ${statusColors.border}`, borderRadius: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: statusColors.color, marginBottom: 8, textTransform: 'uppercase' }}>
+          RESULTADO
+        </div>
+        <div style={{ fontSize: 24, fontWeight: 700, color: statusColors.color }}>
+          {status}
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 20, padding: 20 }}>
+        <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18 }}>
+          📊 Métricas de Evaluación
+        </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+          <div style={{ padding: 16, background: '#eff6ff', borderRadius: 8, borderLeft: '3px solid #0066ff' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 4, textTransform: 'uppercase' }}>
+              Score Q4
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#003366' }}>
+              {q4} <span style={{ fontSize: 14, fontWeight: 400 }}>/ {max}</span>
+            </div>
+          </div>
+          <div style={{ padding: 16, background: '#f0fdf4', borderRadius: 8, borderLeft: '3px solid #10b981' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#10b981', marginBottom: 4, textTransform: 'uppercase' }}>
+              Promedio Anual
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#003366' }}>
+              {Math.round(avg)} <span style={{ fontSize: 14, fontWeight: 400 }}>/ {max}</span>
+            </div>
+          </div>
+          <div style={{ padding: 16, background: '#fef3c7', borderRadius: 8, borderLeft: '3px solid #f59e0b' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#92400e', marginBottom: 4, textTransform: 'uppercase' }}>
+              Umbral Requerido
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#003366' }}>
+              {threshold}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ marginBottom: 20, padding: 20, background: '#f9fafb' }}>
+        <h3 style={{ margin: '0 0 12px 0', color: '#003366', fontSize: 18 }}>
+          🎯 Información del Empleado
+        </h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
+          <div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Rol</div>
+            <div style={{ fontWeight: 600, color: '#003366' }}>{member.role}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Nivel Actual</div>
+            <div style={{ fontWeight: 600, color: '#003366' }}>{member.level}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Objetivo</div>
+            <div style={{ fontWeight: 600, color: '#0066ff' }}>{member.level_target}</div>
+          </div>
+          <div>
+            <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Email</div>
+            <div style={{ fontWeight: 600, color: '#003366' }}>{member.email}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
+        <button
+          className="btn"
+          onClick={exportPDF}
+          style={{
+            background: '#0066ff',
+            color: 'white',
+            padding: '12px 24px',
+            fontSize: 15,
+            fontWeight: 600,
+            width: '100%'
+          }}
+        >
+          📄 Exportar Reporte en PDF
+        </button>
       </div>
     </div>
   )
