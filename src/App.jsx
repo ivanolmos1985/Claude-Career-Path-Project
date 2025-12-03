@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import { AppProvider } from './context/AppContext'
+import { AppProvider, useApp } from './context/AppContext'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import TeamsPage from './pages/TeamsPage'
@@ -21,14 +21,107 @@ function ScrollToTop() {
   return null
 }
 
-// ---- renderiza la app completa SOLO si hay usuario ----
-function AppShell() {
-  const { signOut } = useAuth()
+// ---- Componente de Usuario Dropdown ----
+function UserDropdown() {
+  const { user, signOut } = useAuth()
+  const { isAdminUser, allUsers } = useApp()
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleSignOut = async () => {
     await signOut()
   }
 
+  const dropdownRef = React.useRef(null)
+
+  // Cerrar dropdown al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  return (
+    <div className="user-dropdown-container" ref={dropdownRef}>
+      <button
+        className="user-dropdown-btn"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        👤 {user?.email?.split('@')[0] || 'Usuario'}
+      </button>
+
+      <div className={`user-dropdown-menu ${isOpen ? 'active' : ''}`}>
+        <div className="user-dropdown-header">
+          <div className="user-email">{user?.email}</div>
+          <div className="user-role">Usuario</div>
+          {isAdminUser && (
+            <span className="admin-badge">Admin</span>
+          )}
+        </div>
+
+        {isAdminUser && allUsers.length > 0 && (
+          <>
+            <div style={{ padding: '8px 16px', fontSize: '12px', fontWeight: '600', color: '#6b7280', marginTop: '8px' }}>
+              USUARIOS CONECTADOS
+            </div>
+            <div className="user-list">
+              {allUsers.map(u => (
+                <div key={u.id} className="user-list-item">
+                  📧 {u.email}
+                </div>
+              ))}
+            </div>
+            <div className="dropdown-divider"></div>
+          </>
+        )}
+
+        <button
+          className="dropdown-logout"
+          onClick={handleSignOut}
+        >
+          🚪 Cerrar sesión
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ---- Componente de Tabs de Navegación ----
+function SubHeader() {
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+
+  const tabs = [
+    { label: '🏢 Equipos', path: '/teams' },
+    { label: '👥 Miembros', path: '/members' },
+    { label: '📊 Evaluación', path: '/evaluation' },
+    { label: '📈 Progreso', path: '/progress' },
+    { label: '✅ Decisión', path: '/decision' }
+  ]
+
+  return (
+    <div className="subheader">
+      <div className="subheader-tabs">
+        {tabs.map(tab => (
+          <button
+            key={tab.path}
+            className={`tab ${pathname === tab.path ? 'active' : ''}`}
+            onClick={() => navigate(tab.path)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ---- renderiza la app completa SOLO si hay usuario ----
+function AppShell() {
   return (
     <div className="container">
       <ScrollToTop />
@@ -40,46 +133,22 @@ function AppShell() {
           <h2 style={{ margin: 0, fontSize: 20 }}>Career Path System</h2>
         </div>
 
-        <div className="header-right">
-          <div className="user-info">
-            <span>👤 Admin User</span>
-          </div>
-          <Link to="/teams">
-            <button className="btn btn-primary">Equipos</button>
-          </Link>
-          <button className="btn" onClick={handleSignOut} style={{ background: '#dc3545', color: 'white' }}>
-            Cerrar sesión
-          </button>
-        </div>
+        <UserDropdown />
       </div>
 
-      {/* LAYOUT */}
-      <div style={{ display: 'flex' }}>
+      {/* SUBHEADER CON TABS */}
+      <SubHeader />
 
-        {/* SIDEBAR */}
-        <div className="sidebar" style={{ minHeight: 400 }}>
-          <div style={{ fontWeight: 700, marginBottom: 12 }}>Navegación</div>
-
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <Link to="/teams">🏢 Equipos</Link>
-            <Link to="/members">👥 Miembros</Link>
-            <Link to="/evaluation">📊 Evaluación</Link>
-            <Link to="/progress">📈 Progreso</Link>
-            <Link to="/decision">✅ Decisión</Link>
-          </nav>
-        </div>
-
-        {/* CONTENT */}
-        <div className="content">
-          <Routes>
-            <Route path="/" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
-            <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
-            <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
-            <Route path="/evaluation" element={<ProtectedRoute><EvaluationPage /></ProtectedRoute>} />
-            <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
-            <Route path="/decision" element={<ProtectedRoute><DecisionPage /></ProtectedRoute>} />
-          </Routes>
-        </div>
+      {/* CONTENT */}
+      <div className="content">
+        <Routes>
+          <Route path="/" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
+          <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
+          <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
+          <Route path="/evaluation" element={<ProtectedRoute><EvaluationPage /></ProtectedRoute>} />
+          <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
+          <Route path="/decision" element={<ProtectedRoute><DecisionPage /></ProtectedRoute>} />
+        </Routes>
       </div>
     </div>
   )
