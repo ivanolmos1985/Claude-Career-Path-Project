@@ -104,7 +104,7 @@ function OnlineUsersCard() {
                 </div>
                 <div className="user-info">
                   <div className="user-item-name">
-                    {u.email?.split('@')[0]}
+                    {u.full_name || u.email?.split('@')[0]}
                   </div>
                   <div className="user-item-email">{u.email}</div>
                   <div className="user-status">Active now</div>
@@ -120,7 +120,7 @@ function OnlineUsersCard() {
 
 // ---- Header Solo con Logo + Título ----
 function Header() {
-  const { user, signOut } = useAuth()
+  const { user, userProfile, signOut } = useAuth()
   const { isAdminUser } = useApp()
 
   return (
@@ -147,7 +147,7 @@ function Header() {
         <div className="user-profile">
           <div className="user-detail">
             <div className="user-label">Nombre</div>
-            <div className="user-value">{user?.email?.split('@')[0]}</div>
+            <div className="user-value">{userProfile?.full_name || user?.email?.split('@')[0]}</div>
           </div>
           <div className="user-detail">
             <div className="user-label">Email</div>
