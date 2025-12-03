@@ -18,7 +18,16 @@ export function AuthProvider({ children }) {
         .eq('id', userId)
         .single()
 
-      if (error) throw error
+      if (error) {
+        // Si el usuario no existe en la base de datos, cerrar sesión
+        if (error.code === 'PGRST116' || error.message?.includes('No rows found')) {
+          console.warn('User profile not found in database, logging out')
+          await supabase.auth.signOut()
+          setUser(null)
+          setUserProfile(null)
+        }
+        throw error
+      }
       setUserProfile(data)
     } catch (error) {
       console.error('Error fetching user profile:', error)
