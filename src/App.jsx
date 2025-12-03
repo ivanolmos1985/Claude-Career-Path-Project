@@ -175,11 +175,11 @@ function SubHeader() {
   const navigate = useNavigate()
 
   const tabs = [
-    { label: 'Equipos', path: '/teams' },
-    { label: 'Miembros', path: '/members' },
-    { label: 'Evaluación', path: '/evaluation' },
-    { label: 'Progreso', path: '/progress' },
-    { label: 'Decisión', path: '/decision' }
+    { label: 'Equipos', path: '/teams', icon: '🏢' },
+    { label: 'Miembros', path: '/members', icon: '👥' },
+    { label: 'Evaluación', path: '/evaluation', icon: '📊' },
+    { label: 'Progreso', path: '/progress', icon: '📈' },
+    { label: 'Decisión', path: '/decision', icon: '✅' }
   ]
 
   return (
@@ -189,8 +189,10 @@ function SubHeader() {
           key={tab.path}
           className={`subheader-tab ${pathname === tab.path ? 'active' : ''}`}
           onClick={() => navigate(tab.path)}
+          title={tab.label}
         >
-          {tab.label}
+          <span className="tab-icon">{tab.icon}</span>
+          <span className="tab-label">{tab.label}</span>
         </button>
       ))}
     </div>
