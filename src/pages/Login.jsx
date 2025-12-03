@@ -69,17 +69,17 @@ export default function LoginPage() {
             style={{ height: 50, marginBottom: 16 }}
           />
           <h2 style={{ margin: "0 0 8px 0", fontSize: 24, fontWeight: 700, color: "#003366" }}>
-            Delivery Manager Dashboard
+            Career Path System
           </h2>
           <p style={{ margin: 0, fontSize: 14, color: "#6b7280" }}>
             Sign in to access your account
           </p>
         </div>
 
-        <label>Email</label>
+        <label>Username</label>
         <input
           type="email"
-          placeholder="correo@empresa.com"
+          placeholder="usuario@empresa.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -90,10 +90,10 @@ export default function LoginPage() {
           }}
         />
 
-        <label>Contraseña</label>
+        <label>Password</label>
         <input
           type="password"
-          placeholder="********"
+          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
