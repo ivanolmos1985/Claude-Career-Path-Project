@@ -1,10 +1,11 @@
-/* ==================== CARD COMPONENT ====================  */
+/* ==================== CARD COMPONENT - MODERN GLASSMORPHISM ====================  */
 
 .card {
-  background: var(--color-neutral-0);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-neutral-200);
-  box-shadow: var(--shadow-xs);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   transition: all var(--transition-normal);
 }
@@ -14,9 +15,10 @@
 }
 
 .card-hoverable:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-neutral-300);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(99, 102, 241, 0.2);
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15), 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
 }
 
 .card-no-padding {
@@ -27,8 +29,8 @@
 
 .card-header {
   padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-neutral-200);
-  background: var(--color-neutral-50);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+  background: linear-gradient(180deg, rgba(244, 243, 255, 0.5) 0%, rgba(255, 255, 255, 0.3) 100%);
 }
 
 .card-header h3 {
@@ -36,6 +38,7 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-neutral-900);
+  letter-spacing: 0.3px;
 }
 
 .card-content {
@@ -48,8 +51,8 @@
 
 .card-footer {
   padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-neutral-200);
-  background: var(--color-neutral-50);
+  border-top: 1px solid rgba(99, 102, 241, 0.1);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(244, 243, 255, 0.3) 100%);
   display: flex;
   gap: var(--spacing-md);
   justify-content: flex-end;
@@ -58,24 +61,41 @@
 
 /* ==================== CARD VARIANTS ====================  */
 
-/* Metric Card */
+/* Metric Card - Data visualization with Indigo accent */
 .card-metric {
   padding: var(--spacing-lg);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-metric::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary-500) 0%, var(--color-accent-500) 100%);
 }
 
 .card-metric .metric-value {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 700;
-  color: var(--color-primary-500);
+  background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-accent-500) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin: var(--spacing-md) 0;
+  letter-spacing: -0.5px;
 }
 
 .card-metric .metric-label {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-neutral-600);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
 }
 
 /* ==================== RESPONSIVE ====================  */
@@ -83,6 +103,7 @@
 @media (max-width: 768px) {
   .card {
     border-radius: var(--radius-md);
+    border: 1px solid rgba(99, 102, 241, 0.08);
   }
 
   .card-header,
@@ -93,5 +114,28 @@
 
   .card-footer {
     flex-wrap: wrap;
+  }
+
+  .card-metric .metric-value {
+    font-size: 28px;
+  }
+
+  .card-metric::before {
+    height: 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    border-radius: var(--radius-md);
+  }
+
+  .card-metric .metric-value {
+    font-size: 24px;
+    margin: var(--spacing-sm) 0;
+  }
+
+  .card-metric .metric-label {
+    font-size: 11px;
   }
 }
