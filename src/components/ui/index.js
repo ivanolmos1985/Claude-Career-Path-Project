@@ -3,22 +3,9 @@
  * Modern design system components
  */
 
-export { Button } from './Button';
-export { Card } from './Card';
-export { Badge } from './Badge';
-export { Input } from './Input';
-export { Table, TableHead, TableBody, TableRow, TableCell } from './Table';
-export { Modal } from './Modal';
-
-export default {
-  Button,
-  Card,
-  Badge,
-  Input,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Modal,
-};
+export { Button } from './Button.jsx';
+export { Card } from './Card.jsx';
+export { Badge } from './Badge.jsx';
+export { Input } from './Input.jsx';
+export { Table, TableHead, TableBody, TableRow, TableCell } from './Table.jsx';
+export { Modal } from './Modal.jsx';
