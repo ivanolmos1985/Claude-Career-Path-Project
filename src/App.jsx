@@ -280,7 +280,7 @@ function AppController() {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return <div style={{ padding: 40, color: 'white' }}>Cargando...</div>
+    return <div style={{ padding: 40, color: '#111', textAlign: 'center', fontSize: 18 }}>Cargando...</div>
   }
 
   // sin usuario → SOLO muestra login
