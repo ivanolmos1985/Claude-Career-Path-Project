@@ -14,6 +14,8 @@ export const Input = React.forwardRef(({
   iconPosition = 'left',
   disabled = false,
   className = '',
+  as = 'input',
+  rows = 3,
   ...props
 }, ref) => {
   const inputClasses = [
@@ -23,6 +25,8 @@ export const Input = React.forwardRef(({
     icon && `input-with-icon-${iconPosition}`,
     className,
   ].filter(Boolean).join(' ');
+
+  const Component = as === 'textarea' ? 'textarea' : 'input';
 
   return (
     <div className="input-wrapper">
@@ -36,10 +40,11 @@ export const Input = React.forwardRef(({
         {icon && iconPosition === 'left' && (
           <span className="input-icon input-icon-left">{icon}</span>
         )}
-        <input
+        <Component
           ref={ref}
           className={inputClasses}
           disabled={disabled}
+          rows={as === 'textarea' ? rows : undefined}
           {...props}
         />
         {icon && iconPosition === 'right' && (

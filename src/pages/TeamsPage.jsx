@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext'
 import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
 import CompetencyManager from '../components/CompetencyManager'
+import { Button, Card, Input, Badge } from '../components/ui'
 
 export default function TeamsPage(){
   const { teams, addTeam, updateTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
@@ -57,97 +58,111 @@ export default function TeamsPage(){
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
-          🏢 Gestión de Equipos
-        </h1>
-        <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
-          Crea y gestiona tus equipos de trabajo
-        </p>
+      {/* Page Header */}
+      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <h1 style={{ margin: '0 0 8px 0', color: 'var(--color-neutral-900)', fontSize: 28, fontWeight: 700 }}>
+            🏢 Gestión de Equipos
+          </h1>
+          <p style={{ margin: 0, color: 'var(--color-neutral-600)', fontSize: 14 }}>
+            Crea y gestiona tus equipos de trabajo
+          </p>
+        </div>
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={createModal.open}
+        >
+          ➕ Crear Nuevo Equipo
+        </Button>
       </div>
 
+      {/* Admin Mode Selector */}
       {isAdminUser && (
-        <div className="card" style={{ marginBottom: 20, background: '#eff6ff', borderLeft: '4px solid #0066ff', padding: 20 }}>
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ fontWeight: 600, color: '#0066ff', fontSize: 15 }}>
+        <Card
+          style={{
+            marginBottom: 24,
+            background: 'var(--color-primary-50)',
+            borderLeft: '4px solid var(--color-primary-500)',
+          }}
+        >
+          <div>
+            <label style={{ fontWeight: 600, color: 'var(--color-primary-700)', fontSize: 14, display: 'block', marginBottom: 12 }}>
               👤 Modo Admin - Selecciona Usuario:
             </label>
+            <select
+              value={selectedUserId || ''}
+              onChange={(e) => setSelectedUserId(e.target.value || null)}
+              style={{
+                width: '100%',
+                borderColor: 'var(--color-primary-500)',
+                maxWidth: 300,
+              }}
+            >
+              <option value="">Ver mis propios datos</option>
+              {allUsersForAdmin.map(u => (
+                <option key={u.id} value={u.id}>
+                  {u.full_name || u.email}
+                </option>
+              ))}
+            </select>
           </div>
-          <select
-            value={selectedUserId || ''}
-            onChange={(e) => setSelectedUserId(e.target.value || null)}
-            style={{ width: '100%', padding: 10, fontSize: '14px', borderColor: '#0066ff' }}
-          >
-            <option value="">Ver mis propios datos</option>
-            {allUsersForAdmin.map(u => (
-              <option key={u.id} value={u.id}>
-                {u.full_name || u.email}
-              </option>
-            ))}
-          </select>
-        </div>
+        </Card>
       )}
 
-      <button
-        className="btn btn-primary"
-        onClick={createModal.open}
-        style={{ marginBottom: 20 }}
-      >
-        ➕ Crear Nuevo Equipo
-      </button>
-
-      <div className="list">
+      {/* Teams List */}
+      <div style={{ display: 'grid', gap: 16 }}>
         {teams.length === 0 && (
-          <div className="card" style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
+          <Card style={{ textAlign: 'center', padding: 'var(--spacing-xxxl)', color: 'var(--color-neutral-500)' }}>
             📭 No hay equipos creados
-          </div>
+          </Card>
         )}
         {teams.map(t => (
-          <div key={t.id} className="card" style={{ padding: 20, marginBottom: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+          <Card key={t.id} hoverable>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, color: '#003366', marginBottom: 4 }}>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: 16, fontWeight: 700, color: 'var(--color-neutral-900)' }}>
                   {t.client}
-                </div>
-                <div style={{ opacity: 0.7, fontSize: 14 }}>
+                </h3>
+                <p style={{ margin: 0, color: 'var(--color-neutral-600)', fontSize: 14 }}>
                   {t.description || 'Sin descripción'}
-                </div>
+                </p>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  className="btn"
+              <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => navigate(`/members?team=${t.id}`)}
-                  style={{ background: '#0066ff', color: 'white' }}
                 >
                   Gestionar
-                </button>
-                <button
-                  className="btn"
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => {
                     setSelectedTeamForCompetencies(t)
                     competencyModal.open()
                   }}
-                  style={{ background: '#8b5cf6', color: 'white' }}
                 >
                   📚 Competencias
-                </button>
-                <button
-                  className="btn"
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => handleEditClick(t)}
-                  style={{ background: '#f59e0b', color: 'white' }}
                 >
                   ✏️ Editar
-                </button>
-                <button
-                  className="btn"
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleDeleteClick(t)}
-                  style={{ background: '#dc3545', color: 'white' }}
                 >
                   Eliminar
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
@@ -160,27 +175,20 @@ export default function TeamsPage(){
         confirmText="Crear"
         cancelText="Cancelar"
       >
-        <div>
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
-            Cliente/Proyecto
-          </label>
-          <input
-            placeholder="Nombre del cliente o proyecto"
-            value={client}
-            onChange={e => setClient(e.target.value)}
-            style={{ borderColor: '#0066ff' }}
-          />
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
-            Descripción (Opcional)
-          </label>
-          <textarea
-            placeholder="Descripción del equipo"
-            value={desc}
-            onChange={e => setDesc(e.target.value)}
-            rows={3}
-            style={{ borderColor: '#0066ff', resize: 'none' }}
-          />
-        </div>
+        <Input
+          label="Cliente/Proyecto"
+          placeholder="Nombre del cliente o proyecto"
+          value={client}
+          onChange={e => setClient(e.target.value)}
+          style={{ marginBottom: 16 }}
+        />
+        <Input
+          label="Descripción (Opcional)"
+          placeholder="Descripción del equipo"
+          value={desc}
+          onChange={e => setDesc(e.target.value)}
+          as="textarea"
+        />
       </Modal>
 
       {/* Modal Editar Equipo */}
@@ -192,27 +200,20 @@ export default function TeamsPage(){
         confirmText="Guardar Cambios"
         cancelText="Cancelar"
       >
-        <div>
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
-            Cliente/Proyecto
-          </label>
-          <input
-            placeholder="Nombre del cliente o proyecto"
-            value={client}
-            onChange={e => setClient(e.target.value)}
-            style={{ borderColor: '#f59e0b' }}
-          />
-          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
-            Descripción (Opcional)
-          </label>
-          <textarea
-            placeholder="Descripción del equipo"
-            value={desc}
-            onChange={e => setDesc(e.target.value)}
-            rows={3}
-            style={{ borderColor: '#f59e0b', resize: 'none' }}
-          />
-        </div>
+        <Input
+          label="Cliente/Proyecto"
+          placeholder="Nombre del cliente o proyecto"
+          value={client}
+          onChange={e => setClient(e.target.value)}
+          style={{ marginBottom: 16 }}
+        />
+        <Input
+          label="Descripción (Opcional)"
+          placeholder="Descripción del equipo"
+          value={desc}
+          onChange={e => setDesc(e.target.value)}
+          as="textarea"
+        />
       </Modal>
 
       {/* Modal Confirmar Eliminar */}
