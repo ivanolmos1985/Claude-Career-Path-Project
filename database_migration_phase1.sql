@@ -11,6 +11,7 @@
 
 -- Add columns to competencies table for soft delete and team customization
 ALTER TABLE IF EXISTS public.competencies
+ADD COLUMN IF NOT EXISTS description TEXT,
 ADD COLUMN IF NOT EXISTS team_id BIGINT REFERENCES public.teams(id) ON DELETE CASCADE,
 ADD COLUMN IF NOT EXISTS is_deleted BOOLEAN DEFAULT false,
 ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP,
