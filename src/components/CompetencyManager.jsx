@@ -4,6 +4,15 @@ import Modal from './Modal'
 import useModal from '../hooks/useModal'
 import TaskManager from './TaskManager'
 
+const ROLES = [
+  { id: 'developer', name: 'Desarrollador' },
+  { id: 'qa', name: 'QA' },
+  { id: 'productowner', name: 'Product Owner' },
+  { id: 'scrummaster', name: 'Scrum Master' },
+  { id: 'uxui', name: 'UX/UI Designer' },
+  { id: 'deliverymanager', name: 'Delivery Manager' }
+]
+
 export default function CompetencyManager({ teamId, isOpen, onClose }) {
   const { addCompetency, updateCompetency, deleteCompetency, getCompetenciesFromDB } = useApp()
   const createModal = useModal()
@@ -11,24 +20,26 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
   const taskModal = useModal()
 
   const [competencies, setCompetencies] = useState([])
+  const [selectedRole, setSelectedRole] = useState('developer')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [weight, setWeight] = useState(20)
   const [selectedCompetency, setSelectedCompetency] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  // Load competencies for the team
+  // Load competencies for the team and role
   useEffect(() => {
     if (isOpen) {
       loadCompetencies()
     }
-  }, [isOpen, teamId])
+  }, [isOpen, teamId, selectedRole])
 
   const loadCompetencies = async () => {
     try {
       setLoading(true)
-      // Get all competencies from database (includes base and custom)
-      const allComps = await getCompetenciesFromDB()
+      // Get competencies for this team and role
+      // Shows base competencies (team_id IS NULL) + team's custom competencies
+      const allComps = await getCompetenciesFromDB(teamId, selectedRole)
       setCompetencies(allComps || [])
     } catch (error) {
       console.error('Error loading competencies:', error)
@@ -42,7 +53,8 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
     if (!name || !weight) return
     try {
       setLoading(true)
-      await addCompetency(teamId, { name, description, weight })
+      // Pass the selected role when creating a custom competency
+      await addCompetency(teamId, { name, description, weight, role: selectedRole })
       setName('')
       setDescription('')
       setWeight(20)
@@ -141,6 +153,35 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
           >
             ✕
           </button>
+        </div>
+
+        {/* Role Filter Dropdown */}
+        <div style={{ marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <label style={{ fontWeight: 600, color: '#003366', fontSize: '14px', whiteSpace: 'nowrap' }}>
+            Filtrar por Rol:
+          </label>
+          <select
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+            disabled={loading}
+            style={{
+              padding: '8px 12px',
+              borderRadius: '6px',
+              border: '1px solid #d1d5db',
+              background: 'white',
+              color: '#003366',
+              fontWeight: 500,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              flex: 1,
+              opacity: loading ? 0.6 : 1
+            }}
+          >
+            {ROLES.map(role => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button

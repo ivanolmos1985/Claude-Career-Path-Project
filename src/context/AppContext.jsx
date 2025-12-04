@@ -468,20 +468,21 @@ export function AppProvider({children}){
 
   const addCompetency = async (teamId, competencyData) => {
     try {
-      const { name, description, weight } = competencyData;
+      const { name, description, weight, role = 'developer' } = competencyData;
 
-      // Generate competency ID from name
-      const competencyId = `team_${teamId}_${name.toLowerCase().replace(/\s+/g, '_')}`;
+      // Generate competency ID from name and role
+      const competencyId = `team_${teamId}_${role}_${name.toLowerCase().replace(/\s+/g, '_')}`;
 
       const { error } = await supabase
         .from('competencies')
         .insert({
           id: competencyId,
           name,
-          role: 'custom', // Mark as custom competency
+          role, // Use the provided role (for custom team competencies)
           weight,
           team_id: teamId,
-          is_deleted: false
+          is_deleted: false,
+          description: description || null
         });
 
       if (error) throw error;
@@ -496,7 +497,8 @@ export function AppProvider({children}){
             name,
             weight,
             team_id: teamId,
-            role: 'custom'
+            role,
+            description
           }]
         };
       }));
@@ -861,12 +863,25 @@ export function AppProvider({children}){
   };
 
   // Get competencies directly from database (not from local file)
-  const getCompetenciesFromDB = async () => {
+  // Supports filtering by team_id and role
+  const getCompetenciesFromDB = async (teamId = null, role = null) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('competencies')
         .select('*')
         .eq('is_deleted', false);
+
+      // Filter by role if provided
+      if (role) {
+        query = query.eq('role', role);
+      }
+
+      // Filter by team - show base competencies (team_id IS NULL) + team's custom ones
+      if (teamId) {
+        query = query.or(`team_id.is.null,team_id.eq.${teamId}`);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
