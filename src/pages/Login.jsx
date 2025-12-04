@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Button, Input, Card } from "../components/ui";
 
 export default function LoginPage() {
   const { signIn } = useAuth();
@@ -44,88 +45,108 @@ export default function LoginPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0a2540 0%, #1a3a52 50%, #0f2a3f 100%)",
-        padding: 20
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        padding: "var(--spacing-lg)",
       }}
     >
-      <form
-        onSubmit={submit}
+      <Card
         style={{
-          background: "white",
-          padding: 40,
-          borderRadius: 14,
-          display: "flex",
-          flexDirection: "column",
           width: "100%",
           maxWidth: 400,
-          gap: 16,
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)"
+          noPadding: true,
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: 12 }}>
-          <img
-            src="/arkus-logo.webp"
-            alt="Arkusnexus"
-            style={{ height: 50, marginBottom: 16 }}
-          />
-          <h2 style={{ margin: "0 0 8px 0", fontSize: 24, fontWeight: 700, color: "#003366" }}>
-            Career Path System
-          </h2>
-          <p style={{ margin: 0, fontSize: 14, color: "#6b7280" }}>
-            Sign in to access your account
-          </p>
-        </div>
-
-        <label>Username</label>
-        <input
-          type="email"
-          placeholder="usuario@empresa.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+        <form
+          onSubmit={submit}
           style={{
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ccc"
+            padding: "var(--spacing-xxl)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--spacing-lg)",
           }}
-        />
-
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ccc"
-          }}
-        />
-
-        {error && <div style={{ color: "red", fontSize: 14 }}>{error}</div>}
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: 12,
-            borderRadius: 8,
-            border: "none",
-            background: "#0066ff",
-            color: "white",
-            cursor: "pointer",
-            fontSize: 15,
-            fontWeight: 600,
-            transition: "background 0.3s ease"
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#0052cc"}
-          onMouseLeave={(e) => e.target.style.background = "#0066ff"}
         >
-          {loading ? "Ingresando..." : "→ Sign In"}
-        </button>
-      </form>
+          {/* Header */}
+          <div style={{ textAlign: "center", marginBottom: "var(--spacing-md)" }}>
+            <img
+              src="/arkus-logo.webp"
+              alt="Arkusnexus"
+              style={{
+                height: 50,
+                marginBottom: "var(--spacing-lg)",
+                objectFit: "contain",
+              }}
+            />
+            <h2
+              style={{
+                margin: "0 0 8px 0",
+                fontSize: 24,
+                fontWeight: 700,
+                color: "var(--color-neutral-900)",
+              }}
+            >
+              Career Path System
+            </h2>
+            <p
+              style={{
+                margin: 0,
+                fontSize: 14,
+                color: "var(--color-neutral-600)",
+              }}
+            >
+              Sign in to access your account
+            </p>
+          </div>
+
+          {/* Email Input */}
+          <Input
+            type="email"
+            label="Username"
+            placeholder="usuario@empresa.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          {/* Password Input */}
+          <Input
+            type="password"
+            label="Password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          {/* Error Message */}
+          {error && (
+            <div
+              style={{
+                color: "var(--color-error-500)",
+                fontSize: 13,
+                fontWeight: 500,
+                padding: "var(--spacing-sm) var(--spacing-md)",
+                background: "var(--color-error-50)",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--color-error-200)",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {/* Sign In Button */}
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            disabled={loading}
+            loading={loading}
+            fullWidth
+          >
+            {loading ? "Ingresando..." : "→ Sign In"}
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 }

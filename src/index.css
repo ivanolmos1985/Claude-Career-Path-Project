@@ -1,6 +1,10 @@
+/* Import modern design system */
+@import './theme/globals.css';
+
 *{box-sizing:border-box;margin:0;padding:0}
 
 :root {
+  /* Legacy colors (kept for backward compatibility) */
   --primary-dark: #003366;
   --primary-blue: #0066ff;
   --light-blue: #1e7bc1;
@@ -9,6 +13,14 @@
   --border-color: #e5e7eb;
   --success: #28a745;
   --danger: #dc3545;
+
+  /* Modern design system colors */
+  --color-primary-500: #2563EB;
+  --color-success-500: #10B981;
+  --color-warning-500: #F97316;
+  --color-error-500: #EF4444;
+  --color-neutral-50: #F8FAFC;
+  --color-neutral-900: #0F172A;
 }
 
 body{

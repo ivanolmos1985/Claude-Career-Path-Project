@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Path System - Mockup Diseño Moderno</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores */
+            --primary: #2563EB;
+            --primary-dark: #1E40AF;
+            --primary-light: #DBEAFE;
+            --success: #10B981;
+            --warning: #F97316;
+            --error: #EF4444;
+            --neutral: #64748B;
+
+            /* Grises */
+            --white: #FFFFFF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-700: #334155;
+            --gray-900: #0F172A;
+
+            /* Espaciado */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 12px;
+            --spacing-base: 16px;
+            --spacing-lg: 20px;
+            --spacing-xl: 24px;
+            --spacing-2xl: 32px;
+            --spacing-3xl: 40px;
+
+            /* Radios */
+            --radius-xs: 4px;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-full: 9999px;
+
+            /* Sombras */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        /* CONTAINER */
+        .container {
+            display: flex;
+            height: 100vh;
+            background: var(--gray-50);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 72px;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--spacing-xl);
+            gap: var(--spacing-2xl);
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .navbar-logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-search {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .navbar-search input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            transition: all 150ms ease;
+        }
+
+        .navbar-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            margin-left: auto;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--primary), var(--warning));
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 72px;
+            width: 280px;
+            height: calc(100vh - 72px);
+            background: var(--gray-50);
+            border-right: 1px solid var(--gray-200);
+            overflow-y: auto;
+            padding: var(--spacing-xl) 0;
+            z-index: 999;
+        }
+
+        .sidebar-section {
+            padding: var(--spacing-base) var(--spacing-base);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .sidebar-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            padding: 0 var(--spacing-base);
+            margin-bottom: var(--spacing-md);
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin: var(--spacing-sm) var(--spacing-base);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 200ms ease;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .sidebar-item.active {
+            background: var(--primary);
+            color: var(--white);
+            font-weight: 600;
+            border-color: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .sidebar-item-icon {
+            font-size: 18px;
+            min-width: 20px;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            margin-top: 72px;
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--spacing-2xl);
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: var(--spacing-sm);
+            letter-spacing: -0.01em;
+        }
+
+        .page-header p {
+            font-size: 15px;
+            color: var(--gray-500);
+            margin: 0;
+        }
+
+        /* GRID CARDS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .metric-card {
+            background: var(--white);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            transition: all 200ms ease;
+            cursor: pointer;
+        }
+
+        .metric-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .metric-icon {
+            font-size: 32px;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 150ms ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-300);
+        }
+
+        /* SECTIONS */
+        .section {
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        /* TABLE */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: var(--gray-50);
+            padding: var(--spacing-lg);
+            text-align: left;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(249, 115, 22, 0.1);
+            color: var(--warning);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .main-content {
+                margin-left: 240px;
+                padding: var(--spacing-xl);
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 var(--spacing-base);
+                gap: var(--spacing-base);
+            }
+
+            .navbar-search {
+                display: none;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 300ms ease;
+                position: fixed;
+                z-index: 999;
+                width: 250px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: var(--spacing-base);
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--spacing-base);
+            }
+        }
+
+        /* DEMO CONTENT */
+        .demo-notice {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            color: var(--primary-dark);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <span class="navbar-logo-icon">🎯</span>
+                <span>Career Path</span>
+            </div>
+            <div class="navbar-search">
+                <input type="text" placeholder="Buscar equipos, miembros...">
+            </div>
+            <div class="navbar-user">
+                <div class="user-avatar">JG</div>
+            </div>
+        </nav>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Principal</div>
+                <div class="sidebar-item active">
+                    <span class="sidebar-item-icon">📊</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">👥</span>
+                    <span>Equipos</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">👤</span>
+                    <span>Miembros</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Evaluación</div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">📝</span>
+                    <span>Evaluaciones</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">📈</span>
+                    <span>Progreso</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">✅</span>
+                    <span>Decisiones</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section" style="border-top: 1px solid var(--gray-200); padding-top: var(--spacing-xl);">
+                <div class="sidebar-title">Otros</div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">⚙️</span>
+                    <span>Configuración</span>
+                </div>
+                <div class="sidebar-item">
+                    <span class="sidebar-item-icon">❓</span>
+                    <span>Ayuda</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="demo-notice">
+                ✨ Este es un mockup del nuevo diseño moderno. Inspired by Figma, Linear, Stripe.
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Bienvenido a tu panel de control. Aquí puedes ver un resumen de tus equipos y evaluaciones.</p>
+            </div>
+
+            <!-- METRICS GRID -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">👥</div>
+                    <div class="metric-value">8</div>
+                    <div class="metric-label">Equipos Activos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">👤</div>
+                    <div class="metric-value">42</div>
+                    <div class="metric-label">Miembros</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">📝</div>
+                    <div class="metric-value">28</div>
+                    <div class="metric-label">Evaluaciones</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">✅</div>
+                    <div class="metric-value">65%</div>
+                    <div class="metric-label">Completación</div>
+                </div>
+            </div>
+
+            <!-- SECTION: TEAMS -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Equipos Recientes</h2>
+                    <button class="btn btn-primary">
+                        ➕ Nuevo Equipo
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Equipo</th>
+                                <th>Miembros</th>
+                                <th>Estado</th>
+                                <th>Progreso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Frontend Team</strong></td>
+                                <td>6</td>
+                                <td><span class="badge badge-success">✓ Activo</span></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="flex: 1; height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden;">
+                                            <div style="height: 100%; width: 85%; background: var(--success); border-radius: 2px;"></div>
+                                        </div>
+                                        <span style="font-size: 12px; color: var(--gray-500);">85%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Backend Team</strong></td>
+                                <td>8</td>
+                                <td><span class="badge badge-success">✓ Activo</span></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="flex: 1; height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden;">
+                                            <div style="height: 100%; width: 60%; background: var(--warning); border-radius: 2px;"></div>
+                                        </div>
+                                        <span style="font-size: 12px; color: var(--gray-500);">60%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>QA Team</strong></td>
+                                <td>5</td>
+                                <td><span class="badge badge-warning">⚠ Pendiente</span></td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <div style="flex: 1; height: 4px; background: #E2E8F0; border-radius: 2px; overflow: hidden;">
+                                            <div style="height: 100%; width: 40%; background: var(--primary); border-radius: 2px;"></div>
+                                        </div>
+                                        <span style="font-size: 12px; color: var(--gray-500);">40%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
