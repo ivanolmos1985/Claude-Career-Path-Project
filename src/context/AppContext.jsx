@@ -860,6 +860,23 @@ export function AppProvider({children}){
     }
   };
 
+  // Get competencies directly from database (not from local file)
+  const getCompetenciesFromDB = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('competencies')
+        .select('*')
+        .eq('is_deleted', false);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching competencies from DB:', error);
+      return [];
+    }
+  };
+
   return <AppContext.Provider value={{
     teams,
     addTeam,
@@ -890,6 +907,7 @@ export function AppProvider({children}){
     deleteEvidenceFile,
     getEvidenceFiles,
     getTeamWeights,
-    updateTeamWeights
+    updateTeamWeights,
+    getCompetenciesFromDB
   }}>{children}</AppContext.Provider>
 }

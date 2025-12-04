@@ -5,7 +5,7 @@ import useModal from '../hooks/useModal'
 import TaskManager from './TaskManager'
 
 export default function CompetencyManager({ teamId, isOpen, onClose }) {
-  const { addCompetency, updateCompetency, deleteCompetency, getCompetencies } = useApp()
+  const { addCompetency, updateCompetency, deleteCompetency, getCompetenciesFromDB } = useApp()
   const createModal = useModal()
   const editModal = useModal()
   const taskModal = useModal()
@@ -27,12 +27,12 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
   const loadCompetencies = async () => {
     try {
       setLoading(true)
-      // Get all competencies from context
-      const allComps = getCompetencies('developer') // This should be role-based
-      // Filter by team if needed
+      // Get all competencies from database (includes base and custom)
+      const allComps = await getCompetenciesFromDB()
       setCompetencies(allComps || [])
     } catch (error) {
       console.error('Error loading competencies:', error)
+      setCompetencies([])
     } finally {
       setLoading(false)
     }
