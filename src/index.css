@@ -650,9 +650,9 @@ input:focus, select:focus, textarea:focus {
 .subheader-tabs {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  padding: 16px 20px;
+  padding: 8px 16px;
   display: flex;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -660,14 +660,14 @@ input:focus, select:focus, textarea:focus {
 .subheader-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 6px;
+  padding: 6px 12px;
   background: #f3f4f6;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  border-radius: 6px;
   color: #6b7280;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -675,7 +675,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .tab-icon {
-  font-size: 16px;
+  font-size: 14px;
   display: flex;
   align-items: center;
 }
