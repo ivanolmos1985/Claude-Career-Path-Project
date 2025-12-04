@@ -462,6 +462,355 @@ export function AppProvider({children}){
     }
   };
 
+  // ============================================================================
+  // COMPETENCY MANAGEMENT FUNCTIONS
+  // ============================================================================
+
+  const addCompetency = async (teamId, competencyData) => {
+    try {
+      const { name, description, weight } = competencyData;
+
+      // Generate competency ID from name
+      const competencyId = `team_${teamId}_${name.toLowerCase().replace(/\s+/g, '_')}`;
+
+      const { error } = await supabase
+        .from('competencies')
+        .insert({
+          id: competencyId,
+          name,
+          role: 'custom', // Mark as custom competency
+          weight,
+          team_id: teamId,
+          is_deleted: false
+        });
+
+      if (error) throw error;
+
+      // Update teams state
+      setTeams(prev => prev.map(t => {
+        if (t.id !== teamId) return t;
+        return {
+          ...t,
+          competencies: [...(t.competencies || []), {
+            id: competencyId,
+            name,
+            weight,
+            team_id: teamId,
+            role: 'custom'
+          }]
+        };
+      }));
+    } catch (error) {
+      console.error('Error adding competency:', error);
+      throw error;
+    }
+  };
+
+  const updateCompetency = async (competencyId, patch) => {
+    try {
+      const { error } = await supabase
+        .from('competencies')
+        .update(patch)
+        .eq('id', competencyId);
+
+      if (error) throw error;
+
+      // Update teams state
+      setTeams(prev => prev.map(t => ({
+        ...t,
+        competencies: (t.competencies || []).map(c =>
+          c.id === competencyId ? { ...c, ...patch } : c
+        )
+      })));
+    } catch (error) {
+      console.error('Error updating competency:', error);
+      throw error;
+    }
+  };
+
+  const deleteCompetency = async (competencyId) => {
+    try {
+      // Soft delete: mark as deleted instead of hard delete
+      const { error } = await supabase
+        .from('competencies')
+        .update({
+          is_deleted: true,
+          deleted_at: new Date().toISOString(),
+          deleted_by: user.id
+        })
+        .eq('id', competencyId);
+
+      if (error) throw error;
+
+      // Update teams state
+      setTeams(prev => prev.map(t => ({
+        ...t,
+        competencies: (t.competencies || []).filter(c => c.id !== competencyId)
+      })));
+    } catch (error) {
+      console.error('Error deleting competency:', error);
+      throw error;
+    }
+  };
+
+  // ============================================================================
+  // TASK MANAGEMENT FUNCTIONS
+  // ============================================================================
+
+  const addTask = async (competencyId, taskData) => {
+    try {
+      const { name, description, teamId } = taskData;
+
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({
+          competency_id: competencyId,
+          team_id: teamId || null,
+          name,
+          description: description || null,
+          display_order: 0,
+          is_active: true
+        })
+        .select();
+
+      if (error) throw error;
+
+      return data[0];
+    } catch (error) {
+      console.error('Error adding task:', error);
+      throw error;
+    }
+  };
+
+  const updateTask = async (taskId, patch) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update(patch)
+        .eq('id', taskId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating task:', error);
+      throw error;
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      throw error;
+    }
+  };
+
+  const getTasksForCompetency = async (competencyId) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('competency_id', competencyId)
+        .eq('is_active', true)
+        .order('display_order', { ascending: true });
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      return [];
+    }
+  };
+
+  // ============================================================================
+  // TASK EVALUATION FUNCTIONS
+  // ============================================================================
+
+  const setTaskRating = async (memberId, taskId, quarter, rating) => {
+    try {
+      const { error } = await supabase
+        .from('task_evaluations')
+        .upsert({
+          member_id: memberId,
+          task_id: taskId,
+          quarter,
+          rating
+        }, { onConflict: 'member_id,task_id,quarter' });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error setting task rating:', error);
+      throw error;
+    }
+  };
+
+  const getTaskEvaluations = async (memberId, quarter) => {
+    try {
+      const { data, error } = await supabase
+        .from('task_evaluations')
+        .select('*')
+        .eq('member_id', memberId)
+        .eq('quarter', quarter);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching task evaluations:', error);
+      return [];
+    }
+  };
+
+  // ============================================================================
+  // FILE UPLOAD FUNCTIONS
+  // ============================================================================
+
+  const uploadEvidenceFile = async (file, metadata) => {
+    try {
+      const { memberId, quarter, taskId } = metadata;
+
+      if (!file) throw new Error('No file provided');
+
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                           'image/jpeg', 'image/png', 'image/gif'];
+
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('File type not allowed. Use PDF, DOCX, XLSX, JPG, PNG, or GIF');
+      }
+
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        throw new Error('File size exceeds 10MB limit');
+      }
+
+      // Generate file path
+      const fileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const filePath = `${user.id}/${memberId}/${quarter}/${taskId}/${fileName}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('evaluation-evidence')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('evaluation-evidence')
+        .getPublicUrl(filePath);
+
+      const fileUrl = urlData.publicUrl;
+
+      // Save file reference to database
+      const { error: dbError } = await supabase
+        .from('evidence_files')
+        .insert({
+          task_id: taskId,
+          file_url: fileUrl,
+          file_name: file.name,
+          file_type: file.type,
+          file_size: file.size,
+          uploaded_by: user.id
+        });
+
+      if (dbError) throw dbError;
+
+      return {
+        url: fileUrl,
+        name: file.name,
+        type: file.type,
+        size: file.size
+      };
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      throw error;
+    }
+  };
+
+  const deleteEvidenceFile = async (fileUrl, evidenceFileId) => {
+    try {
+      // Delete from storage
+      const pathMatch = fileUrl.match(/evaluation-evidence\/(.+)$/);
+      if (pathMatch) {
+        await supabase.storage
+          .from('evaluation-evidence')
+          .remove([pathMatch[1]]);
+      }
+
+      // Delete from database
+      const { error } = await supabase
+        .from('evidence_files')
+        .delete()
+        .eq('id', evidenceFileId);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      throw error;
+    }
+  };
+
+  const getEvidenceFiles = async (taskId) => {
+    try {
+      const { data, error } = await supabase
+        .from('evidence_files')
+        .select('*')
+        .eq('task_id', taskId);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching evidence files:', error);
+      return [];
+    }
+  };
+
+  // ============================================================================
+  // WEIGHT MANAGEMENT FUNCTIONS
+  // ============================================================================
+
+  const getTeamWeights = async (teamId) => {
+    try {
+      const { data, error } = await supabase
+        .from('team_competency_weights')
+        .select('*')
+        .eq('team_id', teamId);
+
+      if (error) throw error;
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching team weights:', error);
+      return [];
+    }
+  };
+
+  const updateTeamWeights = async (teamId, competencyId, weight) => {
+    try {
+      const { error } = await supabase
+        .from('team_competency_weights')
+        .upsert({
+          team_id: teamId,
+          competency_id: competencyId,
+          weight
+        }, { onConflict: 'team_id,competency_id' });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating team weights:', error);
+      throw error;
+    }
+  };
+
   return <AppContext.Provider value={{
     teams,
     addTeam,
@@ -474,10 +823,24 @@ export function AppProvider({children}){
     isAdminUser,
     selectedUserId,
     setSelectedUserId,
-    allUsers, // Solo usuarios online (para avatar card)
-    allUsersForAdmin, // Todos los usuarios (para selector admin)
+    allUsers,
+    allUsersForAdmin,
     markUserOnline,
     updateUserActivity,
-    markUserOffline
+    markUserOffline,
+    addCompetency,
+    updateCompetency,
+    deleteCompetency,
+    addTask,
+    updateTask,
+    deleteTask,
+    getTasksForCompetency,
+    setTaskRating,
+    getTaskEvaluations,
+    uploadEvidenceFile,
+    deleteEvidenceFile,
+    getEvidenceFiles,
+    getTeamWeights,
+    updateTeamWeights
   }}>{children}</AppContext.Provider>
 }
