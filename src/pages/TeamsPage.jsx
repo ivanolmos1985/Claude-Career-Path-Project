@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
+import CompetencyManager from '../components/CompetencyManager'
 
 export default function TeamsPage(){
   const { teams, addTeam, updateTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
@@ -10,10 +11,12 @@ export default function TeamsPage(){
   const createModal = useModal()
   const editModal = useModal()
   const deleteModal = useModal()
+  const competencyModal = useModal()
   const [client, setClient] = useState('')
   const [desc, setDesc] = useState('')
   const [teamToEdit, setTeamToEdit] = useState(null)
   const [teamToDelete, setTeamToDelete] = useState(null)
+  const [selectedTeamForCompetencies, setSelectedTeamForCompetencies] = useState(null)
 
   const handleCreate = () => {
     if(!client) return
@@ -120,6 +123,16 @@ export default function TeamsPage(){
                 </button>
                 <button
                   className="btn"
+                  onClick={() => {
+                    setSelectedTeamForCompetencies(t)
+                    competencyModal.open()
+                  }}
+                  style={{ background: '#8b5cf6', color: 'white' }}
+                >
+                  📚 Competencias
+                </button>
+                <button
+                  className="btn"
                   onClick={() => handleEditClick(t)}
                   style={{ background: '#f59e0b', color: 'white' }}
                 >
@@ -221,6 +234,15 @@ export default function TeamsPage(){
           </p>
         </div>
       </Modal>
+
+      {/* Competency Manager Modal */}
+      {selectedTeamForCompetencies && (
+        <CompetencyManager
+          teamId={selectedTeamForCompetencies.id}
+          isOpen={competencyModal.isOpen}
+          onClose={competencyModal.close}
+        />
+      )}
     </div>
   )
 }

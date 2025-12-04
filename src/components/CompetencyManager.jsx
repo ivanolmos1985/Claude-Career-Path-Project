@@ -1,0 +1,355 @@
+import React, { useState, useEffect } from 'react'
+import { useApp } from '../context/AppContext'
+import Modal from './Modal'
+import useModal from '../hooks/useModal'
+import TaskManager from './TaskManager'
+
+export default function CompetencyManager({ teamId, isOpen, onClose }) {
+  const { addCompetency, updateCompetency, deleteCompetency, getCompetencies } = useApp()
+  const createModal = useModal()
+  const editModal = useModal()
+  const taskModal = useModal()
+
+  const [competencies, setCompetencies] = useState([])
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [weight, setWeight] = useState(20)
+  const [selectedCompetency, setSelectedCompetency] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  // Load competencies for the team
+  useEffect(() => {
+    if (isOpen) {
+      loadCompetencies()
+    }
+  }, [isOpen, teamId])
+
+  const loadCompetencies = async () => {
+    try {
+      setLoading(true)
+      // Get all competencies from context
+      const allComps = getCompetencies('developer') // This should be role-based
+      // Filter by team if needed
+      setCompetencies(allComps || [])
+    } catch (error) {
+      console.error('Error loading competencies:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCreate = async () => {
+    if (!name || !weight) return
+    try {
+      setLoading(true)
+      await addCompetency(teamId, { name, description, weight })
+      setName('')
+      setDescription('')
+      setWeight(20)
+      createModal.close()
+      await loadCompetencies()
+    } catch (error) {
+      console.error('Error creating competency:', error)
+      alert('Error creating competency: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditClick = (competency) => {
+    setSelectedCompetency(competency)
+    setName(competency.name)
+    setDescription(competency.description || '')
+    setWeight(competency.weight || 20)
+    editModal.open()
+  }
+
+  const handleEditConfirm = async () => {
+    if (!name || !selectedCompetency) return
+    try {
+      setLoading(true)
+      await updateCompetency(selectedCompetency.id, { name, description, weight })
+      setName('')
+      setDescription('')
+      setWeight(20)
+      setSelectedCompetency(null)
+      editModal.close()
+      await loadCompetencies()
+    } catch (error) {
+      console.error('Error updating competency:', error)
+      alert('Error updating competency: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDeleteClick = async (competency) => {
+    if (!window.confirm(`¿Eliminar competencia "${competency.name}"?`)) return
+    try {
+      setLoading(true)
+      await deleteCompetency(competency.id)
+      await loadCompetencies()
+    } catch (error) {
+      console.error('Error deleting competency:', error)
+      alert('Error deleting competency: ' + error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleTasksClick = (competency) => {
+    setSelectedCompetency(competency)
+    taskModal.open()
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.7)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1000
+    }}>
+      <div style={{
+        background: 'white',
+        borderRadius: '12px',
+        padding: '24px',
+        maxWidth: '600px',
+        width: '90%',
+        maxHeight: '80vh',
+        overflowY: 'auto',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0, color: '#003366' }}>📚 Competencias del Equipo</h2>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              cursor: 'pointer',
+              color: '#999'
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <button
+          onClick={createModal.open}
+          disabled={loading}
+          style={{
+            background: '#10b981',
+            color: 'white',
+            padding: '10px 16px',
+            borderRadius: '6px',
+            border: 'none',
+            marginBottom: '16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            opacity: loading ? 0.6 : 1
+          }}
+        >
+          ➕ Nueva Competencia
+        </button>
+
+        <div>
+          {competencies.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#999', padding: '20px' }}>
+              No hay competencias aún. Crea una nueva.
+            </p>
+          ) : (
+            competencies.map(comp => (
+              <div
+                key={comp.id}
+                style={{
+                  background: '#f9fafb',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, color: '#003366', marginBottom: '4px' }}>
+                    {comp.name}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                    Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{comp.weight}%</span>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button
+                    onClick={() => handleTasksClick(comp)}
+                    disabled={loading}
+                    style={{
+                      background: '#8b5cf6',
+                      color: 'white',
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      opacity: loading ? 0.6 : 1
+                    }}
+                  >
+                    📋 Tareas
+                  </button>
+
+                  <button
+                    onClick={() => handleEditClick(comp)}
+                    disabled={loading}
+                    style={{
+                      background: '#f59e0b',
+                      color: 'white',
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      opacity: loading ? 0.6 : 1
+                    }}
+                  >
+                    ✏️ Editar
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteClick(comp)}
+                    disabled={loading}
+                    style={{
+                      background: '#ef4444',
+                      color: 'white',
+                      padding: '6px 10px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      opacity: loading ? 0.6 : 1
+                    }}
+                  >
+                    🗑️ Eliminar
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Create Modal */}
+      <Modal
+        isOpen={createModal.isOpen}
+        title="➕ Nueva Competencia"
+        onClose={createModal.close}
+        onConfirm={handleCreate}
+        confirmText="Crear"
+        cancelText="Cancelar"
+      >
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Nombre de la Competencia
+          </label>
+          <input
+            placeholder="Ej: Conocimientos Técnicos"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+          />
+
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Descripción (Opcional)
+          </label>
+          <textarea
+            placeholder="Descripción de la competencia"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+          />
+
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Peso (%) - {weight}%
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={weight}
+            onChange={e => setWeight(parseInt(e.target.value))}
+            style={{ width: '100%', marginBottom: 12 }}
+          />
+        </div>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={editModal.isOpen}
+        title="✏️ Editar Competencia"
+        onClose={editModal.close}
+        onConfirm={handleEditConfirm}
+        confirmText="Guardar"
+        cancelText="Cancelar"
+      >
+        <div>
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Nombre de la Competencia
+          </label>
+          <input
+            placeholder="Ej: Conocimientos Técnicos"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+          />
+
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Descripción (Opcional)
+          </label>
+          <textarea
+            placeholder="Descripción de la competencia"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+          />
+
+          <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
+            Peso (%) - {weight}%
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="100"
+            value={weight}
+            onChange={e => setWeight(parseInt(e.target.value))}
+            style={{ width: '100%', marginBottom: 12 }}
+          />
+        </div>
+      </Modal>
+
+      {/* Task Manager Modal */}
+      {selectedCompetency && (
+        <TaskManager
+          competency={selectedCompetency}
+          teamId={teamId}
+          isOpen={taskModal.isOpen}
+          onClose={taskModal.close}
+        />
+      )}
+    </div>
+  )
+}
