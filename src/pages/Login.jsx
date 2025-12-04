@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { Button, TextField, Stack, Card, Alert, Spinner, colors, spacing, typography } from "../components/ui";
 
 export default function LoginPage() {
   const { signIn } = useAuth();
@@ -44,88 +45,100 @@ export default function LoginPage() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #0a2540 0%, #1a3a52 50%, #0f2a3f 100%)",
-        padding: 20
+        background: `linear-gradient(135deg, ${colors.gray[900]} 0%, ${colors.gray[800]} 50%, ${colors.gray[900]} 100%)`,
+        padding: spacing.base,
       }}
     >
-      <form
-        onSubmit={submit}
+      <Card
+        padding="xl"
+        elevated={true}
         style={{
-          background: "white",
-          padding: 40,
-          borderRadius: 14,
-          display: "flex",
-          flexDirection: "column",
           width: "100%",
-          maxWidth: 400,
-          gap: 16,
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.2)"
+          maxWidth: 420,
         }}
       >
-        <div style={{ textAlign: "center", marginBottom: 12 }}>
-          <img
-            src="/arkus-logo.webp"
-            alt="Arkusnexus"
-            style={{ height: 50, marginBottom: 16 }}
-          />
-          <h2 style={{ margin: "0 0 8px 0", fontSize: 24, fontWeight: 700, color: "#003366" }}>
-            Career Path System
-          </h2>
-          <p style={{ margin: 0, fontSize: 14, color: "#6b7280" }}>
-            Sign in to access your account
-          </p>
-        </div>
+        <Stack gap="lg">
+          {/* Header */}
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 48, marginBottom: spacing.lg }}>🎯</div>
+            <h1 style={{
+              margin: 0,
+              fontSize: typography.h1.fontSize,
+              fontWeight: typography.h1.fontWeight,
+              color: colors.primary,
+              marginBottom: spacing.sm,
+            }}>
+              Career Path System
+            </h1>
+            <p style={{
+              margin: 0,
+              fontSize: typography.bodySmall.fontSize,
+              color: colors.text.secondary,
+            }}>
+              Ingresa a tu cuenta para continuar
+            </p>
+          </div>
 
-        <label>Username</label>
-        <input
-          type="email"
-          placeholder="usuario@empresa.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ccc"
-          }}
-        />
+          {/* Error Alert */}
+          {error && (
+            <Alert
+              type="error"
+              title="Error de autenticación"
+              message={error}
+              onClose={() => setError(null)}
+            />
+          )}
 
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ccc"
-          }}
-        />
+          {/* Form */}
+          <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: spacing.base }}>
+            <TextField
+              label="Email"
+              type="email"
+              placeholder="usuario@empresa.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              required
+            />
 
-        {error && <div style={{ color: "red", fontSize: 14 }}>{error}</div>}
+            <TextField
+              label="Contraseña"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              required
+            />
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: 12,
-            borderRadius: 8,
-            border: "none",
-            background: "#0066ff",
-            color: "white",
-            cursor: "pointer",
-            fontSize: 15,
-            fontWeight: 600,
-            transition: "background 0.3s ease"
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#0052cc"}
-          onMouseLeave={(e) => e.target.style.background = "#0066ff"}
-        >
-          {loading ? "Ingresando..." : "→ Sign In"}
-        </button>
-      </form>
+            <Button
+              type="submit"
+              variant="primary"
+              size="large"
+              disabled={loading}
+              style={{ width: '100%' }}
+            >
+              {loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: spacing.sm }}>
+                  <Spinner size="small" color="white" />
+                  Ingresando...
+                </div>
+              ) : (
+                '→ Iniciar Sesión'
+              )}
+            </Button>
+          </form>
+
+          {/* Footer */}
+          <div style={{
+            textAlign: 'center',
+            fontSize: typography.caption.fontSize,
+            color: colors.text.secondary,
+          }}>
+            ¿Necesitas ayuda? Contacta a tu administrador
+          </div>
+        </Stack>
+      </Card>
     </div>
   );
 }

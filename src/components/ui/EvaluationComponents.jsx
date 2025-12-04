@@ -216,7 +216,7 @@ export function CompetencyProgressBlock({
             </p>
           )}
         </div>
-        <div style{{
+        <div style={{
           textAlign: 'right',
         }}>
           <div style={{
