@@ -13,7 +13,9 @@
       "Bash(findstr:*)",
       "Bash(dir:*)",
       "Bash(git revert:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []
