@@ -10,9 +10,6 @@ import EvaluationPage from './pages/EvaluationPage'
 import ProgressPage from './pages/ProgressPage'
 import DecisionPage from './pages/DecisionPage'
 import LoginPage from './pages/Login'
-import ComponentShowcase from './pages/ComponentShowcase'
-import DashboardPage from './pages/DashboardPage'
-import MainLayout from './layouts/MainLayout'
 
 // Scroll to top cuando cambia la ruta
 function ScrollToTop() {
@@ -257,18 +254,23 @@ function AppShell() {
     <div className="container-app">
       <ScrollToTop />
 
-      <MainLayout>
+      {/* HEADER PRINCIPAL */}
+      <Header />
+
+      {/* SUBHEADER CON TABS */}
+      <SubHeader />
+
+      {/* CONTENT */}
+      <div className="content">
         <Routes>
-          <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
           <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
           <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
-          <Route path="/evaluations" element={<ProtectedRoute><EvaluationPage /></ProtectedRoute>} />
+          <Route path="/evaluation" element={<ProtectedRoute><EvaluationPage /></ProtectedRoute>} />
           <Route path="/progress" element={<ProtectedRoute><ProgressPage /></ProtectedRoute>} />
-          <Route path="/decisions" element={<ProtectedRoute><DecisionPage /></ProtectedRoute>} />
-          <Route path="/components" element={<ComponentShowcase />} />
+          <Route path="/decision" element={<ProtectedRoute><DecisionPage /></ProtectedRoute>} />
         </Routes>
-      </MainLayout>
+      </div>
     </div>
   )
 }
