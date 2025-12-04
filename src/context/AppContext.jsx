@@ -561,6 +561,46 @@ export function AppProvider({children}){
     try {
       const { name, description, teamId } = taskData;
 
+      // First, verify that the competency exists in the database
+      // If it's a base competency (from competenciesByRole), ensure it's in the database
+      const { data: existingComp, error: checkError } = await supabase
+        .from('competencies')
+        .select('id')
+        .eq('id', competencyId)
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        // PGRST116 means "no rows found" which is expected if competency doesn't exist
+        throw checkError;
+      }
+
+      // If competency doesn't exist and it looks like a base competency ID, create it
+      if (!existingComp && !competencyId.startsWith('team_')) {
+        // This is likely a base competency from competenciesByRole that hasn't been created yet
+        // Find the competency in competenciesByRole to get the correct details
+        let competencyDetails = null;
+        for (const role in competenciesByRole) {
+          const found = competenciesByRole[role].find(c => c.id === competencyId);
+          if (found) {
+            competencyDetails = found;
+            break;
+          }
+        }
+
+        const { error: createError } = await supabase
+          .from('competencies')
+          .insert({
+            id: competencyId,
+            role: 'base',
+            name: competencyDetails?.name || competencyId.charAt(0).toUpperCase() + competencyId.slice(1),
+            weight: competencyDetails?.weight || 20,
+            team_id: null,
+            is_deleted: false
+          });
+
+        if (createError) throw createError;
+      }
+
       const { data, error } = await supabase
         .from('tasks')
         .insert({
