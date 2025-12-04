@@ -6,18 +6,18 @@
 export const tokens = {
   // ==================== COLORS ====================
   colors: {
-    // Primary
+    // Primary - INDIGO (Modern & Professional)
     primary: {
-      50: '#F0F7FF',
-      100: '#E0EFFE',
-      200: '#BAE0FD',
-      300: '#7CC5FC',
-      400: '#38ACFD',
-      500: '#2563EB', // Main primary
-      600: '#1D4ED8',
-      700: '#1E40AF',
-      800: '#1E3A8A',
-      900: '#172554',
+      50: '#F4F3FF',
+      100: '#E9E5FF',
+      200: '#D4CCFE',
+      300: '#B4A3FE',
+      400: '#816AFE',
+      500: '#6366F1', // Main primary - INDIGO
+      600: '#4F46E5',
+      700: '#4F46E5',
+      800: '#3730A3',
+      900: '#312E81',
     },
     // Secondary - Success
     success: {
@@ -61,55 +61,69 @@ export const tokens = {
     // Neutral - Grayscale
     neutral: {
       0: '#FFFFFF',
-      50: '#F8FAFC',
-      100: '#F1F5F9',
-      200: '#E2E8F0',
-      300: '#CBD5E1',
-      400: '#94A3B8',
-      500: '#64748B',
-      600: '#475569',
-      700: '#334155',
-      800: '#1E293B',
-      900: '#0F172A',
+      50: '#FAFAFA',
+      100: '#F3F4F6',
+      200: '#E5E7EB',
+      300: '#D1D5DB',
+      400: '#9CA3AF',
+      500: '#6B7280',
+      600: '#4B5563',
+      700: '#374151',
+      800: '#1F2937',
+      900: '#111827',
+    },
+
+    // Accent - Violet (For highlights & special elements)
+    accent: {
+      50: '#FAF5FF',
+      100: '#F3E8FF',
+      200: '#E9D5FF',
+      300: '#D8B4FE',
+      400: '#C084FC',
+      500: '#A855F7',
+      600: '#9333EA',
+      700: '#7E22CE',
+      800: '#6B21A8',
+      900: '#581C87',
     },
   },
 
   // ==================== TYPOGRAPHY ====================
   typography: {
     fontFamily: {
-      display: '"Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif',
-      body: '"Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif',
-      code: '"JetBrains Mono", "Courier New", monospace',
+      display: '"Sora", "Geist", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif',
+      body: '"Sora", "Geist", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif',
+      code: '"JetBrains Mono", "Monaco", "Courier New", monospace',
     },
     sizes: {
       display: {
-        fontSize: '36px',
+        fontSize: '40px',
         fontWeight: 700,
-        lineHeight: '44px',
+        lineHeight: '48px',
         letterSpacing: '-0.02em',
       },
       h1: {
-        fontSize: '28px',
+        fontSize: '32px',
         fontWeight: 700,
-        lineHeight: '36px',
+        lineHeight: '40px',
         letterSpacing: '-0.01em',
       },
       h2: {
-        fontSize: '22px',
+        fontSize: '24px',
         fontWeight: 600,
-        lineHeight: '28px',
-        letterSpacing: '-0.01em',
+        lineHeight: '32px',
+        letterSpacing: '0em',
       },
       h3: {
-        fontSize: '18px',
+        fontSize: '20px',
         fontWeight: 600,
-        lineHeight: '24px',
+        lineHeight: '28px',
         letterSpacing: '0em',
       },
       h4: {
         fontSize: '16px',
         fontWeight: 600,
-        lineHeight: '22px',
+        lineHeight: '24px',
         letterSpacing: '0em',
       },
       body: {
@@ -119,21 +133,21 @@ export const tokens = {
         letterSpacing: '0em',
       },
       bodySmall: {
-        fontSize: '13px',
+        fontSize: '14px',
         fontWeight: 400,
-        lineHeight: '20px',
+        lineHeight: '22px',
         letterSpacing: '0em',
       },
       caption: {
         fontSize: '12px',
         fontWeight: 500,
         lineHeight: '16px',
-        letterSpacing: '0em',
+        letterSpacing: '0.5px',
       },
       code: {
-        fontSize: '12px',
+        fontSize: '13px',
         fontWeight: 400,
-        lineHeight: '16px',
+        lineHeight: '20px',
         letterSpacing: '0em',
       },
     },

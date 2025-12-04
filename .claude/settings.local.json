@@ -12,7 +12,8 @@
       "Bash(npm run build:*)",
       "Bash(findstr:*)",
       "Bash(dir:*)",
-      "Bash(git revert:*)"
+      "Bash(git revert:*)",
+      "Bash(cd:*)"
     ],
     "deny": [],
     "ask": []
