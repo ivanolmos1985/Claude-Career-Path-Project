@@ -24,7 +24,8 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
   const loadTasks = async () => {
     try {
       setLoading(true)
-      const data = await getTasksForCompetency(competency.id)
+      // Pass teamId to ensure tasks are isolated per team
+      const data = await getTasksForCompetency(competency.id, teamId)
       setTasks(data || [])
     } catch (error) {
       console.error('Error loading tasks:', error)
@@ -65,7 +66,8 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
     if (!name || !selectedTask) return
     try {
       setLoading(true)
-      await updateTask(selectedTask.id, { name, description })
+      // Pass teamId to ensure update only affects this team's task
+      await updateTask(selectedTask.id, { name, description }, teamId)
       setName('')
       setDescription('')
       setSelectedTask(null)
@@ -83,7 +85,8 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
     if (!window.confirm(`¿Eliminar tarea "${task.name}"?`)) return
     try {
       setLoading(true)
-      await deleteTask(task.id)
+      // Pass teamId to ensure delete only affects this team's task
+      await deleteTask(task.id, teamId)
       await loadTasks()
     } catch (error) {
       console.error('Error deleting task:', error)

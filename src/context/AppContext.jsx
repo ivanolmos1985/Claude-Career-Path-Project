@@ -572,6 +572,11 @@ export function AppProvider({children}){
     try {
       const { name, description, teamId } = taskData;
 
+      // teamId is REQUIRED for task isolation
+      if (!teamId) {
+        throw new Error('teamId es requerido para crear tareas');
+      }
+
       // First, verify that the competency exists in the database
       // If it's a base competency (from competenciesByRole), ensure it's in the database
       const { data: existingComp, error: checkError } = await supabase
@@ -616,7 +621,7 @@ export function AppProvider({children}){
         .from('tasks')
         .insert({
           competency_id: competencyId,
-          team_id: teamId || null,
+          team_id: teamId, // REQUIRED - ensures isolation
           name,
           description: description || null,
           display_order: 0,
@@ -633,8 +638,22 @@ export function AppProvider({children}){
     }
   };
 
-  const updateTask = async (taskId, patch) => {
+  const updateTask = async (taskId, patch, teamId) => {
     try {
+      // Verify task belongs to this team before updating
+      // RLS policy will also enforce this at database level
+      if (teamId) {
+        const { data: task, error: fetchError } = await supabase
+          .from('tasks')
+          .select('team_id')
+          .eq('id', taskId)
+          .single();
+
+        if (fetchError || !task || task.team_id !== teamId) {
+          throw new Error('Task does not belong to this team');
+        }
+      }
+
       const { error } = await supabase
         .from('tasks')
         .update(patch)
@@ -647,8 +666,22 @@ export function AppProvider({children}){
     }
   };
 
-  const deleteTask = async (taskId) => {
+  const deleteTask = async (taskId, teamId) => {
     try {
+      // Verify task belongs to this team before deleting
+      // RLS policy will also enforce this at database level
+      if (teamId) {
+        const { data: task, error: fetchError } = await supabase
+          .from('tasks')
+          .select('team_id')
+          .eq('id', taskId)
+          .single();
+
+        if (fetchError || !task || task.team_id !== teamId) {
+          throw new Error('Task does not belong to this team');
+        }
+      }
+
       const { error } = await supabase
         .from('tasks')
         .delete()
@@ -661,14 +694,21 @@ export function AppProvider({children}){
     }
   };
 
-  const getTasksForCompetency = async (competencyId) => {
+  const getTasksForCompetency = async (competencyId, teamId = null) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('tasks')
         .select('*')
         .eq('competency_id', competencyId)
         .eq('is_active', true)
         .order('display_order', { ascending: true });
+
+      // Filter by team if provided - ensures isolation
+      if (teamId) {
+        query = query.eq('team_id', teamId);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
