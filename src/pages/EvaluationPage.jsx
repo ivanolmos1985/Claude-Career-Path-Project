@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { useApp } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '../hooks/useQuery'
@@ -11,71 +11,146 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 )
 
-export default function EvaluationPage(){
-  const { teams, updateMember, getCompetencies } = useApp()
+export default function EvaluationPage() {
+  const { teams, updateMember, getCompetencies, getTasksForCompetency, setTaskRating, uploadEvidenceFile, getEvidenceFiles } = useApp()
   const query = useQuery()
   const teamId = Number(query.get('team'))
   const memberId = Number(query.get('member'))
-  const team = teams.find(t=>t.id===teamId)
-  const member = team && team.members.find(m=>m.id===memberId)
-  const [quarter,setQuarter]=useState('Q1')
-  const navigate = useNavigate()
+  const team = teams.find(t => t.id === teamId)
+  const member = team && team.members.find(m => m.id === memberId)
+
+  const [quarter, setQuarter] = useState('Q1')
+  const [navigate] = [useNavigate()]
+  const [competencies, setCompetencies] = useState([])
+  const [competencyTasks, setCompetencyTasks] = useState({}) // { competencyId: [tasks] }
+  const [ratings, setRatings] = useState({}) // { taskId: rating }
+  const [evidence, setEvidence] = useState({}) // { taskId: [files] }
+  const [loading, setLoading] = useState(false)
+  const [uploadingFiles, setUploadingFiles] = useState({}) // { taskId: boolean }
   const successModal = useModal()
 
-  useEffect(()=>{ if(!team || !member) navigate('/teams') },[team,member,navigate])
+  useEffect(() => {
+    if (!team || !member) navigate('/teams')
+  }, [team, member, navigate])
 
-  if(!team || !member) return null
+  // Load competencies and tasks
+  useEffect(() => {
+    if (team && member) {
+      loadCompetenciesAndTasks()
+    }
+  }, [team, member, quarter])
 
-  const comps = getCompetencies(member.role)
-
-  const setRating = async (q, compId, rating) => {
+  const loadCompetenciesAndTasks = async () => {
     try {
-      // Actualizar estado local primero para feedback inmediato
-      const patch = { evaluations: {...member.evaluations, [q]: {...member.evaluations[q], [compId]: rating}} }
-      updateMember(team.id, member.id, patch)
+      setLoading(true)
+      const comps = getCompetencies(member.role)
+      setCompetencies(comps || [])
 
-      // Guardar a Supabase
-      const { error } = await supabase
-        .from('evaluations')
-        .upsert({
-          member_id: member.id,
-          quarter: q,
-          competency_id: compId,
-          rating: rating
-        }, { onConflict: 'member_id,quarter,competency_id' })
-
-      if (error) {
-        console.error('Error saving rating:', error)
-        alert(`Error al guardar evaluación: ${error.message}`)
+      // Load tasks for each competency
+      const tasksMap = {}
+      for (const comp of (comps || [])) {
+        const tasks = await getTasksForCompetency(comp.id)
+        tasksMap[comp.id] = tasks || []
       }
-    } catch (err) {
-      console.error('Error in setRating:', err)
+      setCompetencyTasks(tasksMap)
+
+      // Load existing ratings for this quarter
+      const { data: evaluations } = await supabase
+        .from('task_evaluations')
+        .select('*')
+        .eq('member_id', member.id)
+        .eq('quarter', quarter)
+
+      if (evaluations) {
+        const ratingsMap = {}
+        evaluations.forEach(e => {
+          ratingsMap[e.task_id] = e.rating
+        })
+        setRatings(ratingsMap)
+      }
+
+      // Load evidence files
+      const { data: files } = await supabase
+        .from('evidence_files')
+        .select('*')
+        .eq('task_id', null) // For now, just load task-level files
+
+      if (files) {
+        const filesMap = {}
+        files.forEach(f => {
+          if (!filesMap[f.task_id]) filesMap[f.task_id] = []
+          filesMap[f.task_id].push(f)
+        })
+        setEvidence(filesMap)
+      }
+    } catch (error) {
+      console.error('Error loading competencies and tasks:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const setEvidence = async (q, compId, text) => {
+  const handleRatingChange = async (taskId, rating) => {
     try {
-      // Actualizar estado local primero para feedback inmediato
-      const patch = { evidence: {...member.evidence, [q]: {...member.evidence[q], [compId]: text}} }
-      updateMember(team.id, member.id, patch)
-
-      // Guardar a Supabase
-      const { error } = await supabase
-        .from('evidence')
-        .upsert({
-          member_id: member.id,
-          quarter: q,
-          competency_id: compId,
-          description: text
-        }, { onConflict: 'member_id,quarter,competency_id' })
-
-      if (error) {
-        console.error('Error saving evidence:', error)
-        alert(`Error al guardar evidencia: ${error.message}`)
-      }
-    } catch (err) {
-      console.error('Error in setEvidence:', err)
+      setRatings(prev => ({ ...prev, [taskId]: rating }))
+      // Auto-save to database
+      await setTaskRating(member.id, taskId, quarter, rating)
+    } catch (error) {
+      console.error('Error setting rating:', error)
+      alert('Error al guardar calificación: ' + error.message)
     }
+  }
+
+  const handleFileUpload = async (taskId, file) => {
+    if (!file) return
+
+    try {
+      setUploadingFiles(prev => ({ ...prev, [taskId]: true }))
+
+      const uploadedFile = await uploadEvidenceFile(file, {
+        memberId: member.id,
+        quarter,
+        taskId
+      })
+
+      setEvidence(prev => ({
+        ...prev,
+        [taskId]: [...(prev[taskId] || []), uploadedFile]
+      }))
+    } catch (error) {
+      console.error('Error uploading file:', error)
+      alert('Error al cargar archivo: ' + error.message)
+    } finally {
+      setUploadingFiles(prev => ({ ...prev, [taskId]: false }))
+    }
+  }
+
+  const handleDeleteFile = async (taskId, fileId) => {
+    try {
+      // Delete file
+      setEvidence(prev => ({
+        ...prev,
+        [taskId]: (prev[taskId] || []).filter(f => f.id !== fileId)
+      }))
+    } catch (error) {
+      console.error('Error deleting file:', error)
+      alert('Error al eliminar archivo: ' + error.message)
+    }
+  }
+
+  const calculateCompetencyRating = (competencyId) => {
+    const tasks = competencyTasks[competencyId] || []
+    if (tasks.length === 0) return 0
+
+    const totalRating = tasks.reduce((sum, task) => {
+      return sum + (ratings[task.id] || 0)
+    }, 0)
+
+    return (totalRating / tasks.length).toFixed(1)
+  }
+
+  const isCompetencyPassed = (competencyId) => {
+    return parseFloat(calculateCompetencyRating(competencyId)) >= 7
   }
 
   const handleSaveSuccess = () => {
@@ -84,8 +159,10 @@ export default function EvaluationPage(){
 
   const handleConfirmSuccess = () => {
     successModal.close()
-    navigate('/progress?team='+team.id+'&member='+member.id)
+    navigate('/progress?team=' + team.id + '&member=' + member.id)
   }
+
+  if (!team || !member) return null
 
   return (
     <div>
@@ -98,12 +175,11 @@ export default function EvaluationPage(){
         </p>
       </div>
 
+      {/* Quarter Selector */}
       <div className="card" style={{ marginBottom: 20, padding: 16, background: '#eff6ff', borderLeft: '4px solid #0066ff' }}>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 8, textTransform: 'uppercase' }}>
-            Selecciona Trimestre
-          </label>
-        </div>
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 8, textTransform: 'uppercase' }}>
+          Selecciona Trimestre
+        </label>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {['Q1', 'Q2', 'Q3', 'Q4'].map(q => (
             <button
@@ -125,88 +201,223 @@ export default function EvaluationPage(){
         </div>
       </div>
 
+      {/* Competencies with Tasks */}
       <div>
-        {comps.map((c, idx) => (
-          <div key={c.id} className="card" style={{ marginBottom: 16, padding: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16, gap: 16 }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 16, color: '#003366', marginBottom: 4 }}>
-                  {idx + 1}. {c.name}
-                </div>
-                <div style={{ opacity: 0.7, fontSize: 13, color: '#6b7280' }}>
-                  Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{c.weight}%</span>
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 6 }}>
-                {[1, 2, 3, 4, 5].map(r => (
-                  <button
-                    key={r}
-                    className={'btn' + ((member.evaluations[quarter] || {})[c.id] === r ? ' btn-primary' : '')}
-                    onClick={() => setRating(quarter, c.id, r)}
-                    style={{
-                      padding: '8px 12px',
-                      background: (member.evaluations[quarter] || {})[c.id] === r ? '#0066ff' : '#f3f4f6',
-                      color: (member.evaluations[quarter] || {})[c.id] === r ? 'white' : '#003366',
-                      fontWeight: 600,
-                      minWidth: 40,
-                      textAlign: 'center'
-                    }}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <textarea
-              placeholder="Agregar evidencia para esta competencia..."
-              value={(member.evidence[quarter] || {})[c.id] || ''}
-              onChange={e => setEvidence(quarter, c.id, e.target.value)}
-              style={{
-                marginTop: 0,
-                width: '100%',
-                padding: 12,
-                borderRadius: 8,
-                border: '1px solid #e5e7eb',
-                borderColor: '#0066ff',
-                fontFamily: 'inherit',
-                fontSize: 14,
-                minHeight: 80,
-                resize: 'vertical',
-                fontColor: '#003366'
-              }}
-            />
+        {competencies.length === 0 ? (
+          <div className="card" style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
+            No hay competencias configuradas. Crea competencias en la gestión de equipos.
           </div>
-        ))}
+        ) : (
+          competencies.map((competency, compIdx) => {
+            const tasks = competencyTasks[competency.id] || []
+            const competencyRating = calculateCompetencyRating(competency.id)
+            const isPassed = isCompetencyPassed(competency.id)
+
+            return (
+              <div key={competency.id} className="card" style={{ marginBottom: 24, padding: 20 }}>
+                {/* Competency Header */}
+                <div style={{ marginBottom: 16, paddingBottom: 12, borderBottom: '2px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 16, color: '#003366', marginBottom: 4 }}>
+                        {compIdx + 1}. {competency.name}
+                      </div>
+                      <div style={{ opacity: 0.7, fontSize: 13, color: '#6b7280' }}>
+                        Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{competency.weight}%</span>
+                      </div>
+                    </div>
+                    <div style={{
+                      background: isPassed ? '#d1fae5' : '#fee2e2',
+                      color: isPassed ? '#065f46' : '#7f1d1d',
+                      padding: '6px 12px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      textAlign: 'center'
+                    }}>
+                      {isPassed ? '✅ APROBADA' : '❌ NO APROBADA'}<br />
+                      {competencyRating}/10
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tasks */}
+                {tasks.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '16px', color: '#999', fontSize: '14px' }}>
+                    No hay tareas configuradas para esta competencia
+                  </div>
+                ) : (
+                  tasks.map((task, taskIdx) => {
+                    const taskRating = ratings[task.id] || 0
+                    const taskPassed = taskRating >= 7
+
+                    return (
+                      <div key={task.id} style={{
+                        background: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px',
+                        padding: '16px',
+                        marginBottom: '12px'
+                      }}>
+                        {/* Task Header */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 600, color: '#003366', marginBottom: '4px' }}>
+                              Tarea {taskIdx + 1}: {task.name}
+                            </div>
+                            {task.description && (
+                              <div style={{ fontSize: '13px', color: '#6b7280' }}>
+                                {task.description}
+                              </div>
+                            )}
+                          </div>
+                          <div style={{
+                            background: taskPassed ? '#d1fae5' : '#fee2e2',
+                            color: taskPassed ? '#065f46' : '#7f1d1d',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            whiteSpace: 'nowrap',
+                            marginLeft: '12px'
+                          }}>
+                            {taskPassed ? '✅' : '❌'} {taskRating > 0 ? `${taskRating}/10` : '-'}
+                          </div>
+                        </div>
+
+                        {/* Rating Buttons (1-10) */}
+                        <div style={{ display: 'flex', gap: '4px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(r => (
+                            <button
+                              key={r}
+                              onClick={() => handleRatingChange(task.id, r)}
+                              style={{
+                                padding: '8px 10px',
+                                background: taskRating === r ? '#0066ff' : '#f3f4f6',
+                                color: taskRating === r ? 'white' : '#003366',
+                                border: taskRating === r ? '2px solid #0066ff' : '1px solid #e5e7eb',
+                                borderRadius: '6px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                minWidth: '32px',
+                                transition: 'all 0.2s'
+                              }}
+                            >
+                              {r}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* File Upload Section */}
+                        <div style={{ marginBottom: '12px' }}>
+                          <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#003366', marginBottom: '6px' }}>
+                            📎 Archivos de Evidencia
+                          </label>
+                          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                            <input
+                              type="file"
+                              accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png,.gif"
+                              onChange={(e) => handleFileUpload(task.id, e.target.files[0])}
+                              disabled={uploadingFiles[task.id]}
+                              style={{
+                                padding: '6px',
+                                border: '1px solid #e5e7eb',
+                                borderRadius: '4px',
+                                flex: 1,
+                                fontSize: '12px',
+                                cursor: uploadingFiles[task.id] ? 'not-allowed' : 'pointer',
+                                opacity: uploadingFiles[task.id] ? 0.6 : 1
+                              }}
+                            />
+                            {uploadingFiles[task.id] && (
+                              <span style={{ fontSize: '12px', color: '#0066ff', fontWeight: '600' }}>
+                                Cargando...
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Uploaded Files Preview */}
+                          {(evidence[task.id] || []).length > 0 && (
+                            <div style={{ marginTop: '8px' }}>
+                              {(evidence[task.id] || []).map((file, idx) => (
+                                <div
+                                  key={file.id || idx}
+                                  style={{
+                                    background: '#fff',
+                                    border: '1px solid #e5e7eb',
+                                    borderRadius: '4px',
+                                    padding: '8px',
+                                    marginBottom: '4px',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    fontSize: '12px'
+                                  }}
+                                >
+                                  <span style={{ color: '#0066ff', fontWeight: '500' }}>📄 {file.name || file.file_name}</span>
+                                  <button
+                                    onClick={() => handleDeleteFile(task.id, file.id)}
+                                    style={{
+                                      background: '#ef4444',
+                                      color: 'white',
+                                      border: 'none',
+                                      padding: '4px 8px',
+                                      borderRadius: '4px',
+                                      cursor: 'pointer',
+                                      fontSize: '11px',
+                                      fontWeight: '600'
+                                    }}
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+              </div>
+            )
+          })
+        )}
       </div>
 
+      {/* Save Button */}
       <div style={{ marginTop: 24, paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
         <button
           className="btn btn-success"
           onClick={handleSaveSuccess}
+          disabled={loading}
           style={{
             background: '#10b981',
             color: 'white',
             padding: '12px 24px',
             fontSize: 15,
-            fontWeight: 600
+            fontWeight: 600,
+            opacity: loading ? 0.6 : 1,
+            cursor: loading ? 'not-allowed' : 'pointer'
           }}
         >
           💾 Guardar y Continuar
         </button>
       </div>
 
-      {/* Modal Evaluación Guardada */}
+      {/* Success Modal */}
       <Modal
         isOpen={successModal.isOpen}
         title="✅ Evaluación Guardada"
         onClose={handleConfirmSuccess}
         onConfirm={handleConfirmSuccess}
-        confirmText="Continuar"
-        cancelText=""
+        confirmText="Ver Resultado"
+        cancelText={null}
       >
         <div>
           <p style={{ margin: 0, color: '#374151', lineHeight: 1.6 }}>
-            La evaluación de competencias ha sido guardada exitosamente.
+            La evaluación de <strong>{member.name}</strong> para el trimestre <strong>{quarter}</strong> se ha guardado correctamente.
           </p>
         </div>
       </Modal>
