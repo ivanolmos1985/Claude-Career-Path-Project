@@ -508,12 +508,21 @@ export function AppProvider({children}){
 
   const updateCompetency = async (competencyId, patch) => {
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('competencies')
         .update(patch)
-        .eq('id', competencyId);
+        .eq('id', competencyId)
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase update error:', error);
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+        console.warn('Update returned no rows - possible RLS issue or competency not found');
+        throw new Error('No se pudo actualizar la competencia. Verifica que exista y que tengas permisos.');
+      }
 
       // Update teams state
       setTeams(prev => prev.map(t => ({
