@@ -215,40 +215,38 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Administrator Panel */}
-      {isAdminUser && (
-        <div style={{
-          padding: '24px',
-          background: 'linear-gradient(135deg, #faf5ff 0%, #f5e6ff 100%)',
-          borderLeft: '4px solid #a855f7',
-          borderRadius: '8px'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h3 style={{
-              margin: 0,
-              fontSize: 16,
-              fontWeight: 600,
-              color: '#6b21a8'
-            }}>
-              Administrator Panel
-            </h3>
-            <Button
-              variant="primary"
-              size="md"
-              onClick={() => navigate('/teams')}
-              style={{
-                background: `linear-gradient(135deg, ${colors.accent[500]} 0%, ${colors.accent[600]} 100%)`,
-                width: 'fit-content',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}
-            >
-              <BiCog size={18} /> Manage Users & Competencies
-            </Button>
-          </div>
+      {/* Management Panel */}
+      <div style={{
+        padding: '24px',
+        background: 'linear-gradient(135deg, #faf5ff 0%, #f5e6ff 100%)',
+        borderLeft: '4px solid #a855f7',
+        borderRadius: '8px'
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{
+            margin: 0,
+            fontSize: 16,
+            fontWeight: 600,
+            color: '#6b21a8'
+          }}>
+            Manage Teams & Members
+          </h3>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => navigate('/teams')}
+            style={{
+              background: `linear-gradient(135deg, ${colors.accent[500]} 0%, ${colors.accent[600]} 100%)`,
+              width: 'fit-content',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+          >
+            <BiCog size={18} /> Go to Teams & Competencies
+          </Button>
         </div>
-      )}
+      </div>
 
       {/* Debug Info - Only in development */}
       {process.env.NODE_ENV === 'development' && (
