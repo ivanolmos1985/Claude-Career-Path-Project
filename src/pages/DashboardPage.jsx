@@ -33,8 +33,8 @@ export default function DashboardPage() {
     }
   }, [teams])
 
-  // Get job role (from first team or default)
-  const jobRole = teams.length > 0 ? teams[0].job_role || 'Not Set' : 'Not Set'
+  // Get job role from user profile
+  const jobRole = userProfile?.job_role || 'Not Set'
 
   // Access level
   const accessLevel = isAdminUser ? 'Admin' : 'User'
