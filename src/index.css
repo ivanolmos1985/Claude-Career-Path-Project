@@ -642,24 +642,25 @@ input:focus, select:focus, textarea:focus {
 .subheader-tabs {
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  padding: 8px 16px;
+  padding: 4px 12px;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
   flex-wrap: wrap;
+  min-height: 40px;
 }
 
 .subheader-tab {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 4px 10px;
   background: #f3f4f6;
   border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  border-radius: 5px;
   color: #6b7280;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
@@ -667,7 +668,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .tab-icon {
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   align-items: center;
 }
