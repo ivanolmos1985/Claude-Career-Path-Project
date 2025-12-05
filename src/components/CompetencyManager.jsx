@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext'
 import Modal from './Modal'
 import useModal from '../hooks/useModal'
 import TaskManager from './TaskManager'
+import { BiBook, BiPlus, BiPencil, BiTrash, BiClipboard, BiX } from 'react-icons/bi'
 
 const ROLES = [
   { id: 'developer', name: 'Desarrollador' },
@@ -140,7 +141,9 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
         boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, color: '#003366' }}>📚 Competencias del Equipo</h2>
+          <h2 style={{ margin: 0, color: '#003366', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <BiBook size={24} style={{ color: '#6366F1' }} /> Competencias del Equipo
+          </h2>
           <button
             onClick={onClose}
             style={{
@@ -148,10 +151,13 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
               border: 'none',
               fontSize: '24px',
               cursor: 'pointer',
-              color: '#999'
+              color: '#999',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            ✕
+            <BiX size={24} />
           </button>
         </div>
 
@@ -188,7 +194,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
           onClick={createModal.open}
           disabled={loading}
           style={{
-            background: '#10b981',
+            background: '#6366F1',
             color: 'white',
             padding: '10px 16px',
             borderRadius: '6px',
@@ -196,10 +202,13 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
             marginBottom: '16px',
             fontWeight: 600,
             cursor: 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
           }}
         >
-          ➕ Nueva Competencia
+          <BiPlus size={18} /> Nueva Competencia
         </button>
 
         <div>
@@ -236,7 +245,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
                     onClick={() => handleTasksClick(comp)}
                     disabled={loading}
                     style={{
-                      background: '#8b5cf6',
+                      background: '#6366F1',
                       color: 'white',
                       padding: '6px 10px',
                       borderRadius: '4px',
@@ -244,10 +253,14 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 600,
-                      opacity: loading ? 0.6 : 1
+                      opacity: loading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
+                    title="Gestionar tareas"
                   >
-                    📋 Tareas
+                    <BiClipboard size={14} /> Tareas
                   </button>
 
                   <button
@@ -262,10 +275,14 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 600,
-                      opacity: loading ? 0.6 : 1
+                      opacity: loading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
+                    title="Editar competencia"
                   >
-                    ✏️ Editar
+                    <BiPencil size={14} /> Editar
                   </button>
 
                   <button
@@ -280,10 +297,14 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 600,
-                      opacity: loading ? 0.6 : 1
+                      opacity: loading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
+                    title="Eliminar competencia"
                   >
-                    🗑️ Eliminar
+                    <BiTrash size={14} /> Eliminar
                   </button>
                 </div>
               </div>
@@ -295,7 +316,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
       {/* Create Modal */}
       <Modal
         isOpen={createModal.isOpen}
-        title="➕ Nueva Competencia"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPlus size={18} /> Nueva Competencia</span>}
         onClose={createModal.close}
         onConfirm={handleCreate}
         confirmText="Crear"
@@ -340,7 +361,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
       {/* Edit Modal */}
       <Modal
         isOpen={editModal.isOpen}
-        title="✏️ Editar Competencia"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPencil size={18} /> Editar Competencia</span>}
         onClose={editModal.close}
         onConfirm={handleEditConfirm}
         confirmText="Guardar"

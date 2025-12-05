@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useApp } from '../context/AppContext'
 import Modal from './Modal'
 import useModal from '../hooks/useModal'
+import { BiClipboard, BiPlus, BiPencil, BiTrash, BiX } from 'react-icons/bi'
 
 export default function TaskManager({ competency, teamId, isOpen, onClose }) {
   const { addTask, updateTask, deleteTask, getTasksForCompetency } = useApp()
@@ -122,7 +123,9 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
         boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, color: '#003366' }}>📋 Tareas - {competency.name}</h2>
+          <h2 style={{ margin: 0, color: '#003366', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <BiClipboard size={24} style={{ color: '#6366F1' }} /> Tareas - {competency.name}
+          </h2>
           <button
             onClick={onClose}
             style={{
@@ -130,10 +133,13 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
               border: 'none',
               fontSize: '24px',
               cursor: 'pointer',
-              color: '#999'
+              color: '#999',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            ✕
+            <BiX size={24} />
           </button>
         </div>
 
@@ -141,7 +147,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
           onClick={createModal.open}
           disabled={loading}
           style={{
-            background: '#10b981',
+            background: '#6366F1',
             color: 'white',
             padding: '10px 16px',
             borderRadius: '6px',
@@ -149,10 +155,13 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
             marginBottom: '16px',
             fontWeight: 600,
             cursor: 'pointer',
-            opacity: loading ? 0.6 : 1
+            opacity: loading ? 0.6 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
           }}
         >
-          ➕ Nueva Tarea
+          <BiPlus size={18} /> Nueva Tarea
         </button>
 
         <div>
@@ -199,10 +208,14 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 600,
-                      opacity: loading ? 0.6 : 1
+                      opacity: loading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
+                    title="Editar tarea"
                   >
-                    ✏️ Editar
+                    <BiPencil size={14} /> Editar
                   </button>
 
                   <button
@@ -217,10 +230,14 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 600,
-                      opacity: loading ? 0.6 : 1
+                      opacity: loading ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
+                    title="Eliminar tarea"
                   >
-                    🗑️ Eliminar
+                    <BiTrash size={14} /> Eliminar
                   </button>
                 </div>
               </div>
@@ -232,7 +249,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
       {/* Create Modal */}
       <Modal
         isOpen={createModal.isOpen}
-        title="➕ Nueva Tarea"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPlus size={18} /> Nueva Tarea</span>}
         onClose={createModal.close}
         onConfirm={handleCreate}
         confirmText="Crear"
@@ -265,7 +282,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
       {/* Edit Modal */}
       <Modal
         isOpen={editModal.isOpen}
-        title="✏️ Editar Tarea"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPencil size={18} /> Editar Tarea</span>}
         onClose={editModal.close}
         onConfirm={handleEditConfirm}
         confirmText="Guardar"
