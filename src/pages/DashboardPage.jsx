@@ -249,6 +249,22 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Debug Info - Only in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{
+          padding: '16px',
+          background: '#f0f0f0',
+          borderRadius: '6px',
+          fontSize: '12px',
+          fontFamily: 'monospace',
+          color: '#333'
+        }}>
+          <div><strong>User ID:</strong> {user?.id}</div>
+          <div><strong>Is Admin:</strong> {String(isAdminUser)}</div>
+          <div><strong>Email:</strong> {user?.email}</div>
+        </div>
+      )}
     </div>
   )
 }
