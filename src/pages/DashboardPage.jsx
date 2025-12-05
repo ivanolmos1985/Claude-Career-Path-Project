@@ -6,7 +6,7 @@ import { Button, Card, Badge } from '../components/ui'
 
 export default function DashboardPage() {
   const { user, userProfile } = useAuth()
-  const { teams, isAdminUser, loading } = useApp()
+  const { teams = [], isAdminUser = false } = useApp() || {}
   const navigate = useNavigate()
 
   // Calculate metrics
@@ -33,15 +33,6 @@ export default function DashboardPage() {
 
   // Access level
   const accessLevel = isAdminUser ? 'Admin' : 'User'
-
-  // Show loading state while teams are being fetched
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
-        <div style={{ fontSize: 16, color: '#6b7280' }}>Cargando dashboard...</div>
-      </div>
-    )
-  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
