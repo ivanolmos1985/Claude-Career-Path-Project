@@ -59,7 +59,7 @@ export default function TeamsPage(){
   return (
     <div>
       {/* Page Header */}
-      <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 style={{ margin: '0 0 8px 0', color: 'var(--color-neutral-900)', fontSize: 28, fontWeight: 700 }}>
             🏢 Gestión de Equipos
@@ -81,7 +81,7 @@ export default function TeamsPage(){
       {isAdminUser && (
         <Card
           style={{
-            marginBottom: 24,
+            marginBottom: 16,
             background: 'var(--color-primary-50)',
             borderLeft: '4px solid var(--color-primary-500)',
           }}
