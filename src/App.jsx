@@ -10,6 +10,7 @@ import EvaluationPage from './pages/EvaluationPage'
 import ProgressPage from './pages/ProgressPage'
 import DecisionPage from './pages/DecisionPage'
 import LoginPage from './pages/Login'
+import DashboardPage from './pages/DashboardPage'
 
 // Scroll to top cuando cambia la ruta
 function ScrollToTop() {
@@ -174,6 +175,7 @@ function SubHeader() {
   const navigate = useNavigate()
 
   const tabs = [
+    { label: 'Dashboard', path: '/', icon: '📊' },
     { label: 'Equipos', path: '/teams', icon: '🏢' },
     { label: 'Miembros', path: '/members', icon: '👥' },
     { label: 'Evaluación', path: '/evaluation', icon: '📊' },
@@ -263,7 +265,8 @@ function AppShell() {
       {/* CONTENT */}
       <div className="content">
         <Routes>
-          <Route path="/" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/teams" element={<ProtectedRoute><TeamsPage /></ProtectedRoute>} />
           <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
           <Route path="/evaluation" element={<ProtectedRoute><EvaluationPage /></ProtectedRoute>} />
