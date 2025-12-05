@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useNavigate, useLocation } from 'react-router-dom'
 import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
+import { BiUser, BiPlus, BiLineChart, BiPencil, BiTrash, BiEnvelope } from 'react-icons/bi'
 
 export default function MembersPage(){
   const { teams, addMember, updateMember, deleteMember } = useApp()
@@ -80,8 +81,8 @@ export default function MembersPage(){
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
-          👥 Gestión de Miembros
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <BiUser size={32} style={{ color: '#6366F1' }} /> Gestión de Miembros
         </h1>
         <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
           Añade y gestiona los miembros de tu equipo
@@ -89,15 +90,16 @@ export default function MembersPage(){
       </div>
 
       {!team && (
-        <div className="card" style={{ padding: 24, textAlign: 'center', color: '#6b7280' }}>
-          📭 Selecciona un equipo en la sección de Equipos para continuar
+        <div className="card" style={{ padding: 24, textAlign: 'center', color: '#6b7280', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <BiUser size={40} style={{ color: '#d1d5db' }} />
+          Selecciona un equipo en la sección de Equipos para continuar
         </div>
       )}
 
       {team && (
         <>
-          <div className="card" style={{ marginBottom: 20, padding: 20, background: '#eff6ff', borderLeft: '4px solid #0066ff' }}>
-            <div style={{ color: '#0066ff', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+          <div className="card" style={{ marginBottom: 20, padding: 20, background: '#eff6ff', borderLeft: '4px solid #6366F1' }}>
+            <div style={{ color: '#6366F1', fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
               EQUIPO ACTUAL
             </div>
             <div style={{ fontWeight: 700, fontSize: 18, color: '#003366', marginBottom: 4 }}>
@@ -111,19 +113,20 @@ export default function MembersPage(){
           <button
             className="btn btn-primary"
             onClick={addModal.open}
-            style={{ marginBottom: 20 }}
+            style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            ➕ Agregar Nuevo Miembro
+            <BiPlus size={18} /> Agregar Nuevo Miembro
           </button>
 
           <div style={{ marginTop: 24 }}>
-            <h2 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 22, fontWeight: 700 }}>
-              📋 Miembros del Equipo ({team.members.length})
+            <h2 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 22, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <BiUser size={24} style={{ color: '#6366F1' }} /> Miembros del Equipo ({team.members.length})
             </h2>
             <div className="list">
               {team.members.length === 0 && (
-                <div className="card" style={{ textAlign: 'center', padding: 40, color: '#6b7280' }}>
-                  👤 No hay miembros en este equipo aún
+                <div className="card" style={{ textAlign: 'center', padding: 40, color: '#6b7280', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                  <BiUser size={40} style={{ color: '#d1d5db' }} />
+                  No hay miembros en este equipo aún
                 </div>
               )}
               {team.members.map(m => (
@@ -134,37 +137,37 @@ export default function MembersPage(){
                         {m.name}
                       </div>
                       <div style={{ fontSize: 14, color: '#6b7280', marginBottom: 6 }}>
-                        <span style={{ fontWeight: 600, color: '#0066ff' }}>{m.role}</span>
+                        <span style={{ fontWeight: 600, color: '#6366F1' }}>{m.role}</span>
                         {' • '}
                         <span>Nivel: {m.level}</span>
                         {' • '}
                         <span>Meta: {m.level_target}</span>
                       </div>
-                      <div style={{ fontSize: 12, color: '#9ca3af' }}>
-                        ✉️ {m.email}
+                      <div style={{ fontSize: 12, color: '#9ca3af', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <BiEnvelope size={14} /> {m.email}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       <button
                         className="btn"
                         onClick={() => navigate(`/evaluation?team=${team.id}&member=${m.id}`)}
-                        style={{ background: '#0066ff', color: 'white', whiteSpace: 'nowrap' }}
+                        style={{ background: '#6366F1', color: 'white', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
                       >
-                        📊 Evaluar
+                        <BiLineChart size={16} /> Evaluar
                       </button>
                       <button
                         className="btn"
                         onClick={() => handleEditClick(m)}
-                        style={{ background: '#f59e0b', color: 'white', whiteSpace: 'nowrap' }}
+                        style={{ background: '#f59e0b', color: 'white', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
                       >
-                        ✏️ Editar
+                        <BiPencil size={16} /> Editar
                       </button>
                       <button
                         className="btn"
                         onClick={() => handleDeleteClick(m)}
-                        style={{ background: '#dc3545', color: 'white', whiteSpace: 'nowrap' }}
+                        style={{ background: '#dc3545', color: 'white', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
                       >
-                        🗑️ Eliminar
+                        <BiTrash size={16} /> Eliminar
                       </button>
                     </div>
                   </div>
@@ -176,7 +179,7 @@ export default function MembersPage(){
           {/* Modal Agregar Miembro */}
           <Modal
             isOpen={addModal.isOpen}
-            title="➕ Agregar Nuevo Miembro"
+            title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPlus size={18} /> Agregar Nuevo Miembro</span>}
             onClose={addModal.close}
             onConfirm={handleAddMember}
             confirmText="Agregar"
@@ -190,7 +193,7 @@ export default function MembersPage(){
                 placeholder="Nombre del miembro"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+                style={{ borderColor: '#6366F1', marginBottom: 12 }}
               />
 
               <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -199,7 +202,7 @@ export default function MembersPage(){
               <select
                 value={role}
                 onChange={e => setRole(e.target.value)}
-                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+                style={{ borderColor: '#6366F1', marginBottom: 12 }}
               >
                 <option value="developer">Desarrollador</option>
                 <option value="qa">QA</option>
@@ -215,7 +218,7 @@ export default function MembersPage(){
               <select
                 value={level}
                 onChange={e => setLevel(e.target.value)}
-                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+                style={{ borderColor: '#6366F1', marginBottom: 12 }}
               >
                 <option value="jr">Junior</option>
                 <option value="mid">Mid</option>
@@ -228,7 +231,7 @@ export default function MembersPage(){
               <select
                 value={levelTarget}
                 onChange={e => setLevelTarget(e.target.value)}
-                style={{ borderColor: '#0066ff', marginBottom: 12 }}
+                style={{ borderColor: '#6366F1', marginBottom: 12 }}
               >
                 <option value="mid">Mid</option>
                 <option value="sr">Senior</option>
@@ -241,7 +244,7 @@ export default function MembersPage(){
                 placeholder="email@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                style={{ borderColor: '#0066ff' }}
+                style={{ borderColor: '#6366F1' }}
               />
             </div>
           </Modal>
@@ -249,7 +252,7 @@ export default function MembersPage(){
           {/* Modal Editar Miembro */}
           <Modal
             isOpen={editModal.isOpen}
-            title="✏️ Editar Miembro"
+            title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPencil size={18} /> Editar Miembro</span>}
             onClose={editModal.close}
             onConfirm={handleEditConfirm}
             confirmText="Guardar Cambios"
@@ -322,7 +325,7 @@ export default function MembersPage(){
           {/* Modal Confirmar Eliminar Miembro */}
           <Modal
             isOpen={deleteModal.isOpen}
-            title="⚠️ Eliminar Miembro"
+            title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiTrash size={18} style={{ color: '#ef4444' }} /> Eliminar Miembro</span>}
             onClose={deleteModal.close}
             onConfirm={handleConfirmDelete}
             confirmText="Eliminar"

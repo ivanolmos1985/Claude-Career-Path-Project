@@ -3,6 +3,14 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AppProvider, useApp } from './context/AppContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import {
+  BiChart,
+  BiBuildings,
+  BiUser,
+  BiLineChart,
+  BiTrendingUp,
+  BiCheckCircle
+} from 'react-icons/bi'
 
 import TeamsPage from './pages/TeamsPage'
 import MembersPage from './pages/MembersPage'
@@ -175,12 +183,12 @@ function SubHeader() {
   const navigate = useNavigate()
 
   const tabs = [
-    { label: 'Dashboard', path: '/', icon: '📊' },
-    { label: 'Equipos', path: '/teams', icon: '🏢' },
-    { label: 'Miembros', path: '/members', icon: '👥' },
-    { label: 'Evaluación', path: '/evaluation', icon: '📊' },
-    { label: 'Progreso', path: '/progress', icon: '📈' },
-    { label: 'Decisión', path: '/decision', icon: '✅' }
+    { label: 'Dashboard', path: '/', Icon: BiChart },
+    { label: 'Equipos', path: '/teams', Icon: BiBuildings },
+    { label: 'Miembros', path: '/members', Icon: BiUser },
+    { label: 'Evaluación', path: '/evaluation', Icon: BiLineChart },
+    { label: 'Progreso', path: '/progress', Icon: BiTrendingUp },
+    { label: 'Decisión', path: '/decision', Icon: BiCheckCircle }
   ]
 
   return (
@@ -192,7 +200,7 @@ function SubHeader() {
           onClick={() => navigate(tab.path)}
           title={tab.label}
         >
-          <span className="tab-icon">{tab.icon}</span>
+          <tab.Icon size={20} />
           <span className="tab-label">{tab.label}</span>
         </button>
       ))}

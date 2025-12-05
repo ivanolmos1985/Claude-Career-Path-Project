@@ -2,6 +2,7 @@ import React from 'react'
 import { useApp } from '../context/AppContext'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '../hooks/useQuery'
+import { BiTrendingUp, BiChevronLeft, BiChevronRight } from 'react-icons/bi'
 
 export default function ProgressPage(){
   const { teams, getCompetencies } = useApp()
@@ -20,22 +21,22 @@ export default function ProgressPage(){
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
-          📈 Progreso de Evaluación
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <BiTrendingUp size={32} style={{ color: '#6366F1' }} /> Progreso de Evaluación
         </h1>
         <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
-          <span style={{ fontWeight: 600, color: '#0066ff' }}>{member.name}</span>
+          <span style={{ fontWeight: 600, color: '#6366F1' }}>{member.name}</span>
         </p>
       </div>
 
-      <div className="card" style={{ marginBottom: 20, padding: 20, background: '#eff6ff', borderLeft: '4px solid #0066ff' }}>
+      <div className="card" style={{ marginBottom: 20, padding: 20, background: '#eff6ff', borderLeft: '4px solid #6366F1' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 4, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#6366F1', marginBottom: 4, textTransform: 'uppercase' }}>
               Objetivo de Desarrollo
             </div>
             <div style={{ fontSize: 18, fontWeight: 700, color: '#003366' }}>
-              {member.level} → <span style={{ color: '#0066ff' }}>{member.level_target}</span>
+              {member.level} → <span style={{ color: '#6366F1' }}>{member.level_target}</span>
             </div>
           </div>
         </div>
@@ -50,7 +51,7 @@ export default function ProgressPage(){
             <div key={q} className="card" style={{ marginBottom: 12, padding: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <div style={{ fontWeight: 700, fontSize: 16, color: '#003366' }}>{q}</div>
-                <div style={{ fontSize: 14, fontWeight: 600, color: '#0066ff' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: '#6366F1' }}>
                   {sc}/{maxScore} ({perc}%)
                 </div>
               </div>
@@ -73,16 +74,16 @@ export default function ProgressPage(){
         <button
           className="btn"
           onClick={() => navigate(`/evaluation?team=${team.id}&member=${member.id}`)}
-          style={{ background: '#6b7280', color: 'white', padding: '10px 16px' }}
+          style={{ background: '#6b7280', color: 'white', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
-          ← Volver a Evaluar
+          <BiChevronLeft size={18} /> Volver a Evaluar
         </button>
         <button
           className="btn"
           onClick={() => navigate(`/decision?team=${team.id}&member=${member.id}`)}
-          style={{ background: '#0066ff', color: 'white', padding: '10px 16px', flex: 1 }}
+          style={{ background: '#6366F1', color: 'white', padding: '10px 16px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
         >
-          Ver Decisión →
+          Ver Decisión <BiChevronRight size={18} />
         </button>
       </div>
     </div>

@@ -9,3 +9,6 @@ export { Badge } from './Badge.jsx';
 export { Input } from './Input.jsx';
 export { Table, TableHead, TableBody, TableRow, TableCell } from './Table.jsx';
 export { Modal } from './Modal.jsx';
+export { MetricCard } from './MetricCard.jsx';
+export { StatusBadge } from './StatusBadge.jsx';
+export { ActionButton } from './ActionButton.jsx';

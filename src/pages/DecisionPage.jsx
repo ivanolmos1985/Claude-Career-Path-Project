@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useQuery } from '../hooks/useQuery'
 import { createClient } from '@supabase/supabase-js'
 import html2pdf from 'html2pdf.js'
+import { BiCheckCircle, BiLineChart, BiDownload, BiUser, BiXCircle } from 'react-icons/bi'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -167,11 +168,11 @@ export default function DecisionPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
-          ✅ Decisión de Promoción
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <BiCheckCircle size={32} style={{ color: '#6366F1' }} /> Decisión de Promoción
         </h1>
         <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
-          <span style={{ fontWeight: 600, color: '#0066ff' }}>{member.name}</span>
+          <span style={{ fontWeight: 600, color: '#6366F1' }}>{member.name}</span>
         </p>
       </div>
 
@@ -190,12 +191,12 @@ export default function DecisionPage() {
 
       {/* Metrics */}
       <div className="card" style={{ marginBottom: 20, padding: 20 }}>
-        <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18 }}>
-          📊 Métricas de Evaluación
+        <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <BiLineChart size={22} style={{ color: '#6366F1' }} /> Métricas de Evaluación
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-          <div style={{ padding: 16, background: '#eff6ff', borderRadius: 8, borderLeft: '3px solid #0066ff' }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 4, textTransform: 'uppercase' }}>
+          <div style={{ padding: 16, background: '#eff6ff', borderRadius: 8, borderLeft: '3px solid #6366F1' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#6366F1', marginBottom: 4, textTransform: 'uppercase' }}>
               Score Q4 (Ponderado)
             </div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#003366' }}>
@@ -224,8 +225,8 @@ export default function DecisionPage() {
       {/* Competencies Breakdown */}
       {!loading && competencyData.length > 0 && (
         <div className="card" style={{ marginBottom: 20, padding: 20 }}>
-          <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18 }}>
-            📋 Desglose por Competencia (Q4)
+          <h3 style={{ margin: '0 0 16px 0', color: '#003366', fontSize: 18, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BiLineChart size={22} style={{ color: '#6366F1' }} /> Desglose por Competencia (Q4)
           </h3>
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -249,7 +250,7 @@ export default function DecisionPage() {
                       <td style={{ padding: '12px', color: '#003366', fontWeight: 500 }}>
                         {comp.name}
                       </td>
-                      <td style={{ padding: '12px', textAlign: 'center', color: '#0066ff', fontWeight: 600 }}>
+                      <td style={{ padding: '12px', textAlign: 'center', color: '#6366F1', fontWeight: 600 }}>
                         {comp.weight}%
                       </td>
                       <td style={{ padding: '12px', textAlign: 'center', fontWeight: 600, color: '#003366' }}>
@@ -265,9 +266,12 @@ export default function DecisionPage() {
                           fontSize: '12px',
                           fontWeight: 600,
                           background: isPassed ? '#d1fae5' : '#fee2e2',
-                          color: isPassed ? '#065f46' : '#7f1d1d'
+                          color: isPassed ? '#065f46' : '#7f1d1d',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px'
                         }}>
-                          {isPassed ? '✅' : '❌'}
+                          {isPassed ? <BiCheckCircle size={14} /> : <BiXCircle size={14} />}
                         </span>
                       </td>
                     </tr>
@@ -281,8 +285,8 @@ export default function DecisionPage() {
 
       {/* Employee Info */}
       <div className="card" style={{ marginBottom: 20, padding: 20, background: '#f9fafb' }}>
-        <h3 style={{ margin: '0 0 12px 0', color: '#003366', fontSize: 18 }}>
-          🎯 Información del Empleado
+        <h3 style={{ margin: '0 0 12px 0', color: '#003366', fontSize: 18, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <BiUser size={22} style={{ color: '#6366F1' }} /> Información del Empleado
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
           <div>
@@ -295,7 +299,7 @@ export default function DecisionPage() {
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Objetivo</div>
-            <div style={{ fontWeight: 600, color: '#0066ff' }}>{member.level_target}</div>
+            <div style={{ fontWeight: 600, color: '#6366F1' }}>{member.level_target}</div>
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#6b7280', marginBottom: 4 }}>Email</div>
@@ -311,17 +315,21 @@ export default function DecisionPage() {
           onClick={exportPDF}
           disabled={loading}
           style={{
-            background: '#0066ff',
+            background: '#6366F1',
             color: 'white',
             padding: '12px 24px',
             fontSize: 15,
             fontWeight: 600,
             width: '100%',
             opacity: loading ? 0.6 : 1,
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: loading ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
           }}
         >
-          📄 Exportar Reporte en PDF
+          <BiDownload size={18} /> Exportar Reporte en PDF
         </button>
       </div>
     </div>

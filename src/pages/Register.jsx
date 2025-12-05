@@ -221,22 +221,22 @@ export default function RegisterPage() {
                 padding: 12,
                 borderRadius: 8,
                 border: "none",
-                background: "#0066ff",
+                background: "#6366F1",
                 color: "white",
                 cursor: "pointer",
                 fontSize: 15,
                 fontWeight: 600,
                 transition: "background 0.3s ease"
               }}
-              onMouseEnter={(e) => e.target.style.background = "#0052cc"}
-              onMouseLeave={(e) => e.target.style.background = "#0066ff"}
+              onMouseEnter={(e) => e.target.style.background = "#4F46E5"}
+              onMouseLeave={(e) => e.target.style.background = "#6366F1"}
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
 
             <div style={{ textAlign: "center", marginTop: 12, fontSize: 14 }}>
               ¿Ya tienes cuenta?{" "}
-              <Link to="/login" style={{ color: "#0066ff", textDecoration: "none", fontWeight: 600 }}>
+              <Link to="/login" style={{ color: "#6366F1", textDecoration: "none", fontWeight: 600 }}>
                 Iniciar sesión
               </Link>
             </div>

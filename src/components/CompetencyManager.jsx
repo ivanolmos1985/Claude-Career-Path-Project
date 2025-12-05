@@ -227,7 +227,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
                     {comp.name}
                   </div>
                   <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                    Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{comp.weight}%</span>
+                    Peso: <span style={{ fontWeight: 600, color: '#6366F1' }}>{comp.weight}%</span>
                   </div>
                 </div>
 
@@ -309,7 +309,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
             placeholder="Ej: Conocimientos Técnicos"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -320,7 +320,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%', resize: 'none' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -354,7 +354,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
             placeholder="Ej: Conocimientos Técnicos"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -365,7 +365,7 @@ export default function CompetencyManager({ teamId, isOpen, onClose }) {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%', resize: 'none' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>

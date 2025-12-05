@@ -5,6 +5,7 @@ import { useQuery } from '../hooks/useQuery'
 import { createClient } from '@supabase/supabase-js'
 import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
+import { BiLineChart, BiPaperclip, BiSave, BiCheckCircle, BiXCircle, BiFile } from 'react-icons/bi'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -167,17 +168,17 @@ export default function EvaluationPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700 }}>
-          📊 Evaluación de Competencias
+        <h1 style={{ margin: '0 0 8px 0', color: '#003366', fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <BiLineChart size={32} style={{ color: '#6366F1' }} /> Evaluación de Competencias
         </h1>
         <p style={{ margin: 0, color: '#6b7280', fontSize: 14 }}>
-          Evaluando a: <span style={{ fontWeight: 600, color: '#0066ff' }}>{member.name}</span>
+          Evaluando a: <span style={{ fontWeight: 600, color: '#6366F1' }}>{member.name}</span>
         </p>
       </div>
 
       {/* Quarter Selector */}
-      <div className="card" style={{ marginBottom: 20, padding: 16, background: '#eff6ff', borderLeft: '4px solid #0066ff' }}>
-        <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#0066ff', marginBottom: 8, textTransform: 'uppercase' }}>
+      <div className="card" style={{ marginBottom: 20, padding: 16, background: '#eff6ff', borderLeft: '4px solid #6366F1' }}>
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#6366F1', marginBottom: 8, textTransform: 'uppercase' }}>
           Selecciona Trimestre
         </label>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -187,7 +188,7 @@ export default function EvaluationPage() {
               className={'btn' + (quarter === q ? ' btn-primary' : '')}
               onClick={() => setQuarter(q)}
               style={{
-                background: quarter === q ? '#0066ff' : '#f3f4f6',
+                background: quarter === q ? '#6366F1' : '#f3f4f6',
                 color: quarter === q ? 'white' : '#003366',
                 fontWeight: 600,
                 padding: '10px 18px',
@@ -223,7 +224,7 @@ export default function EvaluationPage() {
                         {compIdx + 1}. {competency.name}
                       </div>
                       <div style={{ opacity: 0.7, fontSize: 13, color: '#6b7280' }}>
-                        Peso: <span style={{ fontWeight: 600, color: '#0066ff' }}>{competency.weight}%</span>
+                        Peso: <span style={{ fontWeight: 600, color: '#6366F1' }}>{competency.weight}%</span>
                       </div>
                     </div>
                     <div style={{
@@ -233,9 +234,16 @@ export default function EvaluationPage() {
                       borderRadius: '6px',
                       fontSize: '12px',
                       fontWeight: 600,
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}>
-                      {isPassed ? '✅ APROBADA' : '❌ NO APROBADA'}<br />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {isPassed ? <BiCheckCircle size={14} /> : <BiXCircle size={14} />}
+                        {isPassed ? 'APROBADA' : 'NO APROBADA'}
+                      </div>
                       {competencyRating}/10
                     </div>
                   </div>
@@ -279,9 +287,13 @@ export default function EvaluationPage() {
                             fontSize: '11px',
                             fontWeight: 600,
                             whiteSpace: 'nowrap',
-                            marginLeft: '12px'
+                            marginLeft: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
                           }}>
-                            {taskPassed ? '✅' : '❌'} {taskRating > 0 ? `${taskRating}/10` : '-'}
+                            {taskPassed ? <BiCheckCircle size={12} /> : <BiXCircle size={12} />}
+                            {taskRating > 0 ? `${taskRating}/10` : '-'}
                           </div>
                         </div>
 
@@ -293,9 +305,9 @@ export default function EvaluationPage() {
                               onClick={() => handleRatingChange(task.id, r)}
                               style={{
                                 padding: '8px 10px',
-                                background: taskRating === r ? '#0066ff' : '#f3f4f6',
+                                background: taskRating === r ? '#6366F1' : '#f3f4f6',
                                 color: taskRating === r ? 'white' : '#003366',
-                                border: taskRating === r ? '2px solid #0066ff' : '1px solid #e5e7eb',
+                                border: taskRating === r ? '2px solid #6366F1' : '1px solid #e5e7eb',
                                 borderRadius: '6px',
                                 fontWeight: 600,
                                 cursor: 'pointer',
@@ -311,8 +323,8 @@ export default function EvaluationPage() {
 
                         {/* File Upload Section */}
                         <div style={{ marginBottom: '12px' }}>
-                          <label style={{ display: 'block', fontSize: '12px', fontWeight: '600', color: '#003366', marginBottom: '6px' }}>
-                            📎 Archivos de Evidencia
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '600', color: '#003366', marginBottom: '6px' }}>
+                            <BiPaperclip size={14} /> Archivos de Evidencia
                           </label>
                           <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                             <input
@@ -331,7 +343,7 @@ export default function EvaluationPage() {
                               }}
                             />
                             {uploadingFiles[task.id] && (
-                              <span style={{ fontSize: '12px', color: '#0066ff', fontWeight: '600' }}>
+                              <span style={{ fontSize: '12px', color: '#6366F1', fontWeight: '600' }}>
                                 Cargando...
                               </span>
                             )}
@@ -355,7 +367,9 @@ export default function EvaluationPage() {
                                     fontSize: '12px'
                                   }}
                                 >
-                                  <span style={{ color: '#0066ff', fontWeight: '500' }}>📄 {file.name || file.file_name}</span>
+                                  <span style={{ color: '#6366F1', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <BiFile size={14} /> {file.name || file.file_name}
+                                  </span>
                                   <button
                                     onClick={() => handleDeleteFile(task.id, file.id)}
                                     style={{
@@ -399,17 +413,20 @@ export default function EvaluationPage() {
             fontSize: 15,
             fontWeight: 600,
             opacity: loading ? 0.6 : 1,
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: loading ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
           }}
         >
-          💾 Guardar y Continuar
+          <BiSave size={18} /> Guardar y Continuar
         </button>
       </div>
 
       {/* Success Modal */}
       <Modal
         isOpen={successModal.isOpen}
-        title="✅ Evaluación Guardada"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiCheckCircle size={18} style={{ color: '#10b981' }} /> Evaluación Guardada</span>}
         onClose={handleConfirmSuccess}
         onConfirm={handleConfirmSuccess}
         confirmText="Ver Resultado"

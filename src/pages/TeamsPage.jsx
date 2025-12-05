@@ -5,6 +5,7 @@ import Modal from '../components/Modal'
 import useModal from '../hooks/useModal'
 import CompetencyManager from '../components/CompetencyManager'
 import { Button, Card, Input, Badge } from '../components/ui'
+import { BiBuildings, BiPlus, BiBook, BiPencil, BiTrash } from 'react-icons/bi'
 
 export default function TeamsPage(){
   const { teams, addTeam, updateTeam, deleteTeam, isAdminUser, selectedUserId, setSelectedUserId, allUsersForAdmin } = useApp()
@@ -61,8 +62,8 @@ export default function TeamsPage(){
       {/* Page Header */}
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ margin: '0 0 8px 0', color: 'var(--color-neutral-900)', fontSize: 28, fontWeight: 700 }}>
-            🏢 Gestión de Equipos
+          <h1 style={{ margin: '0 0 8px 0', color: 'var(--color-neutral-900)', fontSize: 28, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <BiBuildings size={32} style={{ color: '#6366F1' }} /> Gestión de Equipos
           </h1>
           <p style={{ margin: 0, color: 'var(--color-neutral-600)', fontSize: 14 }}>
             Crea y gestiona tus equipos de trabajo
@@ -73,7 +74,7 @@ export default function TeamsPage(){
           size="lg"
           onClick={createModal.open}
         >
-          ➕ Crear Nuevo Equipo
+          <BiPlus size={18} /> Crear Nuevo Equipo
         </Button>
       </div>
 
@@ -114,7 +115,10 @@ export default function TeamsPage(){
       <div style={{ display: 'grid', gap: 16 }}>
         {teams.length === 0 && (
           <Card style={{ textAlign: 'center', padding: 'var(--spacing-xxxl)', color: 'var(--color-neutral-500)' }}>
-            📭 No hay equipos creados
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <BiBuildings size={40} style={{ color: '#d1d5db' }} />
+              No hay equipos creados
+            </div>
           </Card>
         )}
         {teams.map(t => (
@@ -144,21 +148,21 @@ export default function TeamsPage(){
                     competencyModal.open()
                   }}
                 >
-                  📚 Competencias
+                  <BiBook size={16} /> Competencias
                 </Button>
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={() => handleEditClick(t)}
                 >
-                  ✏️ Editar
+                  <BiPencil size={16} /> Editar
                 </Button>
                 <Button
                   variant="danger"
                   size="sm"
                   onClick={() => handleDeleteClick(t)}
                 >
-                  Eliminar
+                  <BiTrash size={16} /> Eliminar
                 </Button>
               </div>
             </div>
@@ -169,7 +173,7 @@ export default function TeamsPage(){
       {/* Modal Crear Equipo */}
       <Modal
         isOpen={createModal.isOpen}
-        title="➕ Crear Nuevo Equipo"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPlus size={18} /> Crear Nuevo Equipo</span>}
         onClose={createModal.close}
         onConfirm={handleCreate}
         confirmText="Crear"
@@ -194,7 +198,7 @@ export default function TeamsPage(){
       {/* Modal Editar Equipo */}
       <Modal
         isOpen={editModal.isOpen}
-        title="✏️ Editar Equipo"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiPencil size={18} /> Editar Equipo</span>}
         onClose={editModal.close}
         onConfirm={handleEditConfirm}
         confirmText="Guardar Cambios"
@@ -219,7 +223,7 @@ export default function TeamsPage(){
       {/* Modal Confirmar Eliminar */}
       <Modal
         isOpen={deleteModal.isOpen}
-        title="⚠️ Eliminar Equipo"
+        title={<span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><BiTrash size={18} style={{ color: '#ef4444' }} /> Eliminar Equipo</span>}
         onClose={deleteModal.close}
         onConfirm={handleConfirmDelete}
         confirmText="Eliminar"

@@ -246,7 +246,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
             placeholder="Ej: Dominio de C# y .NET Framework"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -257,7 +257,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%', resize: 'none' }}
           />
         </div>
       </Modal>
@@ -279,7 +279,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
             placeholder="Ej: Dominio de C# y .NET Framework"
             value={name}
             onChange={e => setName(e.target.value)}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%' }}
           />
 
           <label style={{ display: 'block', marginBottom: 8, fontWeight: 600, color: '#003366' }}>
@@ -290,7 +290,7 @@ export default function TaskManager({ competency, teamId, isOpen, onClose }) {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            style={{ borderColor: '#0066ff', marginBottom: 12, width: '100%', resize: 'none' }}
+            style={{ borderColor: '#6366F1', marginBottom: 12, width: '100%', resize: 'none' }}
           />
         </div>
       </Modal>
