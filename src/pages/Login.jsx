@@ -30,7 +30,7 @@ export default function LoginPage() {
 
     try {
       await signIn(email, password);
-      navigate("/teams");
+      navigate("/");
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
     }
