@@ -152,12 +152,6 @@ body{
   gap: 0;
 }
 
-.subheader-tabs {
-  display: flex;
-  gap: 0;
-  flex: 1;
-}
-
 .tab {
   padding: 14px 20px;
   text-decoration: none;
@@ -754,8 +748,8 @@ input:focus, select:focus, textarea:focus {
   }
 
   .subheader-tabs {
-    padding: 12px 16px;
-    gap: 8px;
+    padding: 4px 12px;
+    gap: 6px;
   }
 }
 
