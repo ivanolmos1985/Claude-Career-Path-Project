@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
-import { Button, Card, Badge } from '../components/ui'
+import { Button } from '../components/ui'
 
 export default function DashboardPage() {
   const { user, userProfile } = useAuth()
@@ -35,7 +35,7 @@ export default function DashboardPage() {
   const accessLevel = isAdminUser ? 'Admin' : 'User'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', padding: '20px', backgroundColor: '#ffffff' }}>
       {/* Page Header */}
       <div>
         <h1 style={{ margin: '0 0 8px 0', color: '#111', fontSize: 32, fontWeight: 700 }}>
@@ -53,7 +53,12 @@ export default function DashboardPage() {
         gap: '16px'
       }}>
         {/* Job Role Card */}
-        <Card style={{ padding: '20px' }}>
+        <div style={{
+          padding: '20px',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          backgroundColor: '#ffffff'
+        }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
               fontSize: 12,
@@ -72,10 +77,15 @@ export default function DashboardPage() {
               {jobRole}
             </span>
           </div>
-        </Card>
+        </div>
 
         {/* Access Level Card */}
-        <Card style={{ padding: '20px' }}>
+        <div style={{
+          padding: '20px',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          backgroundColor: '#ffffff'
+        }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
               fontSize: 12,
@@ -94,10 +104,15 @@ export default function DashboardPage() {
               {accessLevel}
             </span>
           </div>
-        </Card>
+        </div>
 
         {/* Status Card */}
-        <Card style={{ padding: '20px' }}>
+        <div style={{
+          padding: '20px',
+          border: '1px solid #e5e7eb',
+          borderRadius: '8px',
+          backgroundColor: '#ffffff'
+        }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
               fontSize: 12,
@@ -108,11 +123,23 @@ export default function DashboardPage() {
             }}>
               Status
             </span>
-            <Badge variant="success" style={{ width: 'fit-content' }}>
+            <span style={{
+              display: 'inline-block',
+              paddingLeft: '8px',
+              paddingRight: '8px',
+              paddingTop: '4px',
+              paddingBottom: '4px',
+              backgroundColor: '#dcfce7',
+              color: '#166534',
+              borderRadius: '4px',
+              fontSize: '12px',
+              fontWeight: '600',
+              width: 'fit-content'
+            }}>
               Active
-            </Badge>
+            </span>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Metrics Grid */}
@@ -122,10 +149,11 @@ export default function DashboardPage() {
         gap: '16px'
       }}>
         {/* Team Members */}
-        <Card style={{
+        <div style={{
           padding: '24px',
           background: 'linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%)',
-          borderLeft: '4px solid #0066ff'
+          borderLeft: '4px solid #0066ff',
+          borderRadius: '8px'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
@@ -143,13 +171,14 @@ export default function DashboardPage() {
               {metrics.totalMembers}
             </span>
           </div>
-        </Card>
+        </div>
 
         {/* Pending Evaluations */}
-        <Card style={{
+        <div style={{
           padding: '24px',
           background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
-          borderLeft: '4px solid #f59e0b'
+          borderLeft: '4px solid #f59e0b',
+          borderRadius: '8px'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
@@ -167,13 +196,14 @@ export default function DashboardPage() {
               0
             </span>
           </div>
-        </Card>
+        </div>
 
         {/* Completed Evaluations */}
-        <Card style={{
+        <div style={{
           padding: '24px',
           background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
-          borderLeft: '4px solid #10b981'
+          borderLeft: '4px solid #10b981',
+          borderRadius: '8px'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <span style={{
@@ -191,11 +221,11 @@ export default function DashboardPage() {
               {metrics.completedEvaluations}
             </span>
           </div>
-        </Card>
+        </div>
       </div>
 
       {/* Quick Actions */}
-      <Card style={{ padding: '24px' }}>
+      <div style={{ padding: '24px', border: '1px solid #e5e7eb', borderRadius: '8px', backgroundColor: '#ffffff' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h3 style={{
             margin: 0,
@@ -221,7 +251,6 @@ export default function DashboardPage() {
               variant="secondary"
               size="md"
               onClick={() => {
-                // TODO: Implement View Reports
                 alert('View Reports - TBD')
               }}
             >
@@ -229,14 +258,15 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Administrator Panel */}
       {isAdminUser && (
-        <Card style={{
+        <div style={{
           padding: '24px',
           background: 'linear-gradient(135deg, #faf5ff 0%, #f5e6ff 100%)',
-          borderLeft: '4px solid #a855f7'
+          borderLeft: '4px solid #a855f7',
+          borderRadius: '8px'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <h3 style={{
@@ -259,7 +289,7 @@ export default function DashboardPage() {
               ⚙️ Manage Users & Competencies
             </Button>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   )
