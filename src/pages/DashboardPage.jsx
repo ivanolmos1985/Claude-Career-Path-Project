@@ -17,7 +17,12 @@ export default function DashboardPage() {
     // Completed Evaluations - suma total de evaluaciones completadas
     const completedEvaluations = teams.reduce((sum, team) => {
       const teamEvaluations = team.members?.reduce((memberSum, member) => {
-        return memberSum + (member.evaluations?.filter(e => e.status === 'completed')?.length || 0)
+        // member.evaluations es un objeto { Q1: {}, Q2: {}, Q3: {}, Q4: {} }
+        // Contar cuantas evaluaciones tienen datos (no están vacías)
+        const evaluationCount = Object.values(member.evaluations || {}).filter(e =>
+          e && Object.keys(e).length > 0
+        ).length
+        return memberSum + evaluationCount
       }, 0) || 0
       return sum + teamEvaluations
     }, 0)
